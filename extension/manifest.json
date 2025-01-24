@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Contextual Transcriber",
+  "version": "1.0",
+  "description": "A transcription system that adds extra context for users.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "assets/tufts_logo.png"
+  },
+  "icons": {
+    "16": "assets/tufts_logo_16.png",
+    "48": "assets/tufts_logo_48.png",
+    "128": "assets/tufts_logo_128.png"
+  }
+}
