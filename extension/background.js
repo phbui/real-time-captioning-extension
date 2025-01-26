@@ -50,12 +50,13 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "audioChunk") {
-    console.log("Received audio chunk from content script:", message);
+    const blob = new Blob([message.data], { type: "audio/webm" });
+    console.log("Received audio chunk from content script:", blob);
 
     // Forward the audio chunk to WebSocket if needed
     if (socket && socket.readyState === WebSocket.OPEN) {
       console.log("Sending audio chunk to WebSocket...");
-      socket.send(message.data);
+      socket.send(blob);
     }
 
     // Optionally send a response back to the content script

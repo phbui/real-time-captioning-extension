@@ -13,12 +13,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       })
       .then((stream) => {
         console.log("Audio stream captured successfully:", stream);
+
+        const output = new AudioContext();
+        const source = output.createMediaStreamSource(stream);
+        source.connect(output.destination);
+
+        // Set up MediaRecorder for capturing the audio
         const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = (e) => {
+        mediaRecorder.ondataavailable = async (e) => {
           // Send audio chunks to the background script for WebSocket streaming
+          const arrayBuffer = await e.data.arrayBuffer();
+
+          // Send the ArrayBuffer to background.js
           chrome.runtime.sendMessage({
             action: "audioChunk",
-            data: e,
+            data: arrayBuffer,
           });
         };
 
