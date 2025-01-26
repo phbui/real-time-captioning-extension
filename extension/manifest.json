@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Youtube Caption Enrichment",
+  "name": "Caption Enrichment",
   "version": "1.0",
   "description": "A captioning system that adds extra context for users.",
   "permissions": ["tabs", "tabCapture", "activeTab", "scripting", "storage"],
@@ -9,24 +9,28 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": "assets/tufts_logo.png"
+    "default_icon": {
+      "16": "assets/mic_disabled.png",
+      "48": "assets/mic_disabled.png",
+      "128": "assets/mic_disabled.png"
+    },
+    "default_title": "Enable transcription"
   },
   "icons": {
     "16": "assets/tufts_logo_16.png",
     "48": "assets/tufts_logo_48.png",
     "128": "assets/tufts_logo_128.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["youtube_button.js"]
-    }
-  ],
   "web_accessible_resources": [
     {
-      "resources": ["assets/mic_enabled.svg", "assets/mic_disabled.svg"],
-      "matches": ["*://*.youtube.com/*"]
+      "resources": ["assets/mic_disabled.png", "assets/mic_enabled.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["recorder.js"]
     }
   ]
 }

@@ -2,22 +2,80 @@ let socket = null;
 let transcriptionEnabled = false;
 let mediaRecorder = null;
 let capturedStream = null;
+let enableTranscription = false;
+let currentTab = null;
+let activeTabId = null;
 
-chrome.runtime.onMessage.addListener(async (message, sender) => {
-  console.log("Background received message:", message);
+chrome.action.onClicked.addListener((tab) => {
+  console.log("Extension button clicked:", tab);
 
-  if (message.action === "stopTranscription") {
-    console.log("Popup requested stopTranscription...");
+  activeTabId = tab.id; // Update the active tab ID.
+
+  if (!isTranscribing) {
+    console.log("Starting transcription...");
+    chrome.runtime.sendMessage({
+      action: "startCaptureFromContent",
+      tabId: tab.id,
+    });
+    chrome.action.setIcon({ path: "assets/mic_enabled.png" }); // Show enabled icon.
+    chrome.action.setTitle({ title: "Disable transcription" }); // Update tooltip.
+    startTranscriptionForTab(tab);
+  } else {
+    console.log("Stopping transcription...");
+    chrome.runtime.sendMessage({ action: "stopTranscription", tabId: tab.id });
+    chrome.action.setIcon({ path: "assets/mic_disabled.png" }); // Show disabled icon.
+    chrome.action.setTitle({ title: "Enable transcription" }); // Update tooltip.
     stopTranscription();
-  } else if (message.action === "startCaptureFromContent") {
-    console.log("Content script requested capture for tab:", sender.tab.id);
-    console.log("Working with tab: ", sender.tab);
-    startTranscriptionForTab(sender.tab.id);
+  }
+
+  isTranscribing = !isTranscribing; // Toggle transcription state.
+});
+
+// Listen for tab changes and reset transcription state.
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  if (activeTabId !== activeInfo.tabId) {
+    console.log("Tab changed:", activeInfo);
+    resetTranscriptionState();
   }
 });
 
+// Listen for window focus changes and reset transcription state.
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    console.log("No focused window.");
+    return; // Ignore if there's no active window.
+  }
+  resetTranscriptionState();
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "audioChunk") {
+    console.log("Received audio chunk from content script:", message);
+
+    // Forward the audio chunk to WebSocket if needed
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      console.log("Sending audio chunk to WebSocket...");
+      socket.send(message.data);
+    }
+
+    // Optionally send a response back to the content script
+    sendResponse({ success: true });
+  }
+
+  // Ensure the listener does not break if it's asynchronous
+  return true; // Keeps the messaging channel open for async responses
+});
+
+function resetTranscriptionState() {
+  isTranscribing = false;
+  chrome.action.setIcon({ path: "assets/mic_disabled.png" }); // Reset to disabled icon.
+  chrome.action.setTitle({ title: "Enable transcription" }); // Reset tooltip.
+  stopTranscription();
+  console.log("Transcription state reset due to tab/window switch.");
+}
+
 // Start transcription for a specific tab (e.g., content script call)
-async function startTranscriptionForTab(tabId) {
+async function startTranscriptionForTab(tab) {
   if (transcriptionEnabled) {
     console.warn("Transcription is already enabled.");
     return;
@@ -26,7 +84,8 @@ async function startTranscriptionForTab(tabId) {
 
   startWebSocket();
   try {
-    console.log("Using tab for capture:", tabId);
+    console.log("Using tab for capture:", tab);
+    const tabId = tab.id;
     await startCaptureForTab(tabId);
   } catch (err) {
     console.error("Error capturing for tab:", err);
@@ -37,61 +96,50 @@ async function startTranscriptionForTab(tabId) {
 // Common logic to capture from a specific tabId
 function startCaptureForTab(tabId) {
   return new Promise((resolve, reject) => {
-    invokeTab(tabId)
-      .then(() => {
-        chrome.tabCapture.getMediaStreamId(
-          { consumerTabId: tabId },
-          async (mediaStreamId) => {
-            if (chrome.runtime.lastError) {
+    console.log("Retrieving MediaStream ID for tab:", tabId);
+
+    chrome.tabCapture.getMediaStreamId(
+      { consumerTabId: tabId },
+      (mediaStreamId) => {
+        if (chrome.runtime.lastError || !mediaStreamId) {
+          console.error(
+            "getMediaStreamId error:",
+            chrome.runtime.lastError?.message || "No MediaStream ID."
+          );
+          reject(
+            new Error(
+              chrome.runtime.lastError?.message ||
+                "Failed to get MediaStream ID."
+            )
+          );
+          return;
+        }
+
+        console.log("MediaStream ID retrieved:", mediaStreamId);
+
+        // Send a message to the content script to start media capture
+        chrome.tabs.sendMessage(
+          tabId,
+          { action: "startMediaCapture", mediaStreamId: mediaStreamId },
+          (response) => {
+            if (chrome.runtime.lastError || !response?.success) {
               console.error(
-                "getMediaStreamId error:",
-                chrome.runtime.lastError.message
+                "Content script failed to start capture:",
+                chrome.runtime.lastError?.message || response?.error
               );
-              stopTranscription();
-              reject(chrome.runtime.lastError);
-              return;
-            }
-            if (!mediaStreamId) {
-              console.error("Failed to get MediaStream ID.");
-              stopTranscription();
-              reject(new Error("No MediaStream ID."));
-              return;
-            }
-            console.log("MediaStream ID:", mediaStreamId);
-
-            try {
-              capturedStream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                  mandatory: {
-                    chromeMediaSource: "tab",
-                    chromeMediaSourceId: mediaStreamId,
-                  },
-                },
-              });
+              reject(
+                new Error(chrome.runtime.lastError?.message || response?.error)
+              );
+            } else {
               console.log(
-                "Audio stream captured successfully:",
-                capturedStream
+                "Media capture started successfully in content script."
               );
-
-              mediaRecorder = new MediaRecorder(capturedStream);
-              mediaRecorder.ondataavailable = (e) => {
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                  console.log("Sending audio chunk to WebSocket server...");
-                  socket.send(e.data);
-                }
-              };
-              mediaRecorder.start(200); // send chunks every 200ms
-              console.log("MediaRecorder started for tab:", tabId);
               resolve();
-            } catch (err) {
-              console.error("getUserMedia error:", err);
-              stopTranscription();
-              reject(err);
             }
           }
         );
-      })
-      .catch((err) => reject(err));
+      }
+    );
   });
 }
 
@@ -114,30 +162,6 @@ function stopTranscription() {
     capturedStream = null;
   }
   console.log("Transcription fully stopped.");
-}
-
-// "Invoke" the tab to satisfy user gesture constraints
-function invokeTab(tabId) {
-  return new Promise((resolve, reject) => {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId },
-        func: () => console.log("Extension invoked for this page."),
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "Failed to invoke tab:",
-            chrome.runtime.lastError.message
-          );
-          reject(chrome.runtime.lastError);
-          return;
-        }
-        console.log("Tab invoked successfully:", tabId);
-        resolve();
-      }
-    );
-  });
 }
 
 // WebSocket handling
