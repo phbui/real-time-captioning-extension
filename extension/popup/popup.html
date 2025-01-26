@@ -37,11 +37,12 @@
         text-align: center;
       }
 
-      p {
+      #instructions {
         font-size: 14px;
         color: #8a5a2b;
         text-align: center;
         margin-bottom: 20px;
+        min-height: 40px; /* So text changes won't shift layout too much */
       }
 
       button {
@@ -57,13 +58,15 @@
         margin-bottom: 10px;
       }
 
-      button.toggled {
-        background-color: #27406a;
-      }
-
       button:hover {
         background-color: #345c92;
         transform: scale(1.05);
+      }
+
+      p#status {
+        text-align: center;
+        margin-top: 10px;
+        min-height: 24px; /* Reserve space for status text */
       }
 
       footer {
@@ -88,7 +91,7 @@
   </head>
   <body>
     <h1>Caption Enrichment</h1>
-    <p>Enhance your captions with extra context.</p>
+    <div id="instructions">Enhance your captions with extra context.</div>
     <button id="toggleBtn">Enable Captioning</button>
     <p id="status"></p>
     <footer>
@@ -97,7 +100,5 @@
         <a href="https://www.tufts.edu" target="_blank">Tufts University</a>.
       </p>
     </footer>
-
-    <script src="popup.js"></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Caption Enrichment",
+  "name": "Youtube Caption Enrichment",
   "version": "1.0",
   "description": "A captioning system that adds extra context for users.",
   "permissions": ["tabs", "tabCapture", "activeTab", "scripting", "storage"],
@@ -12,15 +12,15 @@
     "default_popup": "popup/popup.html",
     "default_icon": "assets/tufts_logo.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["capture.js"]
-    }
-  ],
   "icons": {
     "16": "assets/tufts_logo_16.png",
     "48": "assets/tufts_logo_48.png",
     "128": "assets/tufts_logo_128.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["youtube-button/youtube-button.js"]
+    }
+  ]
 }

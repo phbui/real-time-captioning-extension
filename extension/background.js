@@ -1,75 +1,232 @@
 let socket = null;
 let transcriptionEnabled = false;
+let mediaRecorder = null;
+let capturedStream = null;
 
-// Handle messages from popup.js
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener(async (message, sender) => {
+  console.log("Background received message:", message);
+
   if (message.action === "startTranscription") {
-    console.log("Starting transcription...");
-    startWebSocket();
+    console.log("Popup requested startTranscription...");
+    startTranscription(); // capture from the active audible tab
   } else if (message.action === "stopTranscription") {
-    console.log("Stopping transcription...");
-    stopWebSocket();
-  } else if (message.action === "sendAudioChunk") {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      console.log("Sending audio chunk to WebSocket server...");
-      socket.send(message.data);
-    } else {
-      console.error("WebSocket is not open. Cannot send audio chunk.");
-    }
+    console.log("Popup requested stopTranscription...");
+    stopTranscription();
+  } else if (message.action === "startCaptureFromContent") {
+    console.log("Content script requested capture for tab:", sender.tab.id);
+    startTranscriptionForTab(sender.tab.id);
   }
 });
 
-// Start WebSocket connection
-function startWebSocket() {
+// Start transcription from the currently active audible tab
+async function startTranscription() {
   if (transcriptionEnabled) {
-    console.warn("WebSocket is already open. Skipping...");
+    console.warn("Transcription is already enabled.");
     return;
   }
+  transcriptionEnabled = true;
 
+  startWebSocket();
+  try {
+    const activeTab = await getActiveAudibleTab();
+    if (!activeTab) {
+      console.error("No valid audible tab found. Stopping transcription.");
+      stopTranscription();
+      return;
+    }
+    console.log("Using active tab for capture:", activeTab);
+    await startCaptureForTab(activeTab.id);
+  } catch (err) {
+    console.error("Error starting transcription:", err);
+    stopTranscription();
+  }
+}
+
+// Start transcription for a specific tab (e.g., content script call)
+async function startTranscriptionForTab(tabId) {
+  if (transcriptionEnabled) {
+    console.warn("Transcription is already enabled.");
+    return;
+  }
+  transcriptionEnabled = true;
+
+  startWebSocket();
+  try {
+    console.log("Using tab for capture:", tabId);
+    await startCaptureForTab(tabId);
+  } catch (err) {
+    console.error("Error capturing for tab:", err);
+    stopTranscription();
+  }
+}
+
+// Common logic to capture from a specific tabId
+function startCaptureForTab(tabId) {
+  return new Promise((resolve, reject) => {
+    invokeTab(tabId)
+      .then(() => {
+        chrome.tabCapture.getMediaStreamId(
+          { consumerTabId: tabId },
+          async (mediaStreamId) => {
+            if (chrome.runtime.lastError) {
+              console.error(
+                "getMediaStreamId error:",
+                chrome.runtime.lastError.message
+              );
+              stopTranscription();
+              reject(chrome.runtime.lastError);
+              return;
+            }
+            if (!mediaStreamId) {
+              console.error("Failed to get MediaStream ID.");
+              stopTranscription();
+              reject(new Error("No MediaStream ID."));
+              return;
+            }
+            console.log("MediaStream ID:", mediaStreamId);
+
+            try {
+              capturedStream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                  mandatory: {
+                    chromeMediaSource: "tab",
+                    chromeMediaSourceId: mediaStreamId,
+                  },
+                },
+              });
+              console.log(
+                "Audio stream captured successfully:",
+                capturedStream
+              );
+
+              mediaRecorder = new MediaRecorder(capturedStream);
+              mediaRecorder.ondataavailable = (e) => {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                  console.log("Sending audio chunk to WebSocket server...");
+                  socket.send(e.data);
+                }
+              };
+              mediaRecorder.start(200); // send chunks every 200ms
+              console.log("MediaRecorder started for tab:", tabId);
+              resolve();
+            } catch (err) {
+              console.error("getUserMedia error:", err);
+              stopTranscription();
+              reject(err);
+            }
+          }
+        );
+      })
+      .catch((err) => reject(err));
+  });
+}
+
+function stopTranscription() {
+  if (!transcriptionEnabled) {
+    console.warn("Transcription already stopped.");
+    return;
+  }
+  transcriptionEnabled = false;
+
+  stopWebSocket();
+
+  if (mediaRecorder) {
+    console.log("Stopping MediaRecorder...");
+    mediaRecorder.stop();
+    mediaRecorder = null;
+  }
+  if (capturedStream) {
+    capturedStream.getTracks().forEach((track) => track.stop());
+    capturedStream = null;
+  }
+  console.log("Transcription fully stopped.");
+}
+
+// Identify the currently active audible tab
+function getActiveAudibleTab() {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs.length) {
+        resolve(null);
+        return;
+      }
+      const tab = tabs[0];
+      if (!tab.url || !tab.url.startsWith("http")) {
+        console.error("Tab restricted or invalid:", tab.url);
+        resolve(null);
+        return;
+      }
+      if (!tab.audible) {
+        console.error("Tab not currently audible.");
+        resolve(null);
+        return;
+      }
+      resolve(tab);
+    });
+  });
+}
+
+// "Invoke" the tab to satisfy user gesture constraints
+function invokeTab(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.scripting.executeScript(
+      {
+        target: { tabId },
+        func: () => console.log("Extension invoked for this page."),
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Failed to invoke tab:",
+            chrome.runtime.lastError.message
+          );
+          reject(chrome.runtime.lastError);
+          return;
+        }
+        console.log("Tab invoked successfully:", tabId);
+        resolve();
+      }
+    );
+  });
+}
+
+// WebSocket handling
+function startWebSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn("WebSocket is already open.");
+    return;
+  }
   console.log("Opening WebSocket connection...");
   socket = new WebSocket("ws://3.141.7.60:5000/transcribe");
 
   socket.onopen = () => {
-    transcriptionEnabled = true;
     console.log("WebSocket connection established.");
   };
-
+  socket.onerror = (err) => {
+    console.error("WebSocket error:", err);
+  };
   socket.onmessage = (event) => {
-    const transcription = event.data;
-    console.log("Received transcription:", transcription);
+    console.log("Received transcription:", event.data);
+    // Forward the transcription text to the currently active tab’s content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length > 0) {
+      if (tabs[0]) {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: "updateCaption",
-          text: transcription,
+          text: event.data,
         });
       }
     });
   };
-
-  socket.onerror = (error) => {
-    console.error("WebSocket error:", error);
-  };
-
   socket.onclose = () => {
-    transcriptionEnabled = false;
     console.log("WebSocket connection closed.");
+    socket = null;
   };
 }
 
-// Stop WebSocket connection
 function stopWebSocket() {
-  if (!transcriptionEnabled) {
-    console.warn("WebSocket is already closed. Skipping...");
-    return;
-  }
-
-  console.log("Closing WebSocket connection...");
   if (socket) {
+    console.log("Closing WebSocket connection...");
     socket.close();
     socket = null;
   }
-
-  transcriptionEnabled = false;
-  console.log("WebSocket connection closed.");
 }
