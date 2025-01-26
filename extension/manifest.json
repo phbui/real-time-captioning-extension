@@ -1,13 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Contextual Transcriber",
+  "name": "Caption Enrichment",
   "version": "1.0",
-  "description": "A transcription system that adds extra context for users.",
-  "permissions": ["storage"],
+  "description": "A captioning system that adds extra context for users.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_icon": "assets/tufts_logo.png"
   },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["captions.js"]
+    }
+  ],
   "icons": {
     "16": "assets/tufts_logo_16.png",
     "48": "assets/tufts_logo_48.png",

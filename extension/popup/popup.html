@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caption Enrichment</title>
+    <style>
+      /* Reset basic styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        background-color: #f5f5f5;
+        color: #333;
+        padding: 20px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 300px;
+        height: 240px;
+        border: 1px solid #d9d9d9;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 20px;
+        color: #417dc1;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      p {
+        font-size: 14px;
+        color: #8a5a2b;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      button {
+        background-color: #417dc1;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        margin-bottom: 10px;
+      }
+
+      button.toggled {
+        background-color: #27406a;
+      }
+
+      button:hover {
+        background-color: #345c92;
+        transform: scale(1.05);
+      }
+
+      footer {
+        position: absolute;
+        bottom: 0px;
+        font-size: 12px;
+        color: #666;
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      footer a {
+        color: #417dc1;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Caption Enrichment</h1>
+    <p>Enhance your captions with extra context.</p>
+    <button id="toggleBtn">Enable Captioning</button>
+    <p id="status"></p>
+    <footer>
+      <p>
+        Powered by
+        <a href="https://www.tufts.edu" target="_blank">Tufts University</a>.
+      </p>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
