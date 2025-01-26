@@ -1,10 +1,36 @@
 let isTranscribing = false;
 
+function injectButtonStyles() {
+  if (document.getElementById("transcription-btn-style")) return; // Avoid injecting multiple times.
+
+  const style = document.createElement("style");
+  style.id = "transcription-btn-style"; // Unique ID for the style tag.
+  style.textContent = `
+    #transcription-btn {
+      position: absolute;
+      margin-left: -50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+    }
+
+    #transcription-btn img {
+      width: 24px;
+      height: 24px;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function addTranscriptionButton() {
   // If the button already exists, do nothing.
   if (document.getElementById("transcription-btn")) {
     return;
   }
+
+  injectButtonStyles();
 
   // Find the right-side YouTube control bar.
   const rightControls = document.querySelector(".ytp-right-controls");
@@ -12,23 +38,33 @@ function addTranscriptionButton() {
     return; // It's possible the player hasn't loaded yet.
   }
 
-  // Create a new button that looks (roughly) like the other YT player buttons.
+  // Create a new button styled like YouTube's buttons.
   const button = document.createElement("button");
   button.id = "transcription-btn";
-  button.classList.add("ytp-button"); // helps match YouTube styling
-  button.style.color = "white";
-  button.innerText = "Transcribe";
+  button.classList.add("ytp-button"); // Helps match YouTube styling
+  button.title = "Enable transcription"; // Tooltip text
 
-  // When the button is clicked, toggle start/stop transcription.
+  // Add an image for the icon
+  const icon = document.createElement("img");
+  icon.src = chrome.runtime.getURL("assets/mic_disabled.svg"); // Default to disabled icon
+  icon.alt = "Microphone Icon";
+  icon.style.width = "24px";
+  icon.style.height = "24px";
+
+  button.appendChild(icon);
+
+  // When the button is clicked, toggle start/stop transcription and update the icon.
   button.addEventListener("click", () => {
     if (!isTranscribing) {
       console.log("Starting transcription...");
       chrome.runtime.sendMessage({ action: "startCaptureFromContent" });
-      button.innerText = "Stop Transcribing";
+      icon.src = chrome.runtime.getURL("assets/mic_enabled.svg"); // Change to enabled icon
+      button.title = "Disable transcription";
     } else {
       console.log("Stopping transcription...");
       chrome.runtime.sendMessage({ action: "stopTranscription" });
-      button.innerText = "Transcribe";
+      icon.src = chrome.runtime.getURL("assets/mic_disabled.svg"); // Change to disabled icon
+      button.title = "Enable transcription";
     }
 
     isTranscribing = !isTranscribing;
