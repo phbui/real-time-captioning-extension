@@ -6,41 +6,15 @@ let capturedStream = null;
 chrome.runtime.onMessage.addListener(async (message, sender) => {
   console.log("Background received message:", message);
 
-  if (message.action === "startTranscription") {
-    console.log("Popup requested startTranscription...");
-    startTranscription(); // capture from the active audible tab
-  } else if (message.action === "stopTranscription") {
+  if (message.action === "stopTranscription") {
     console.log("Popup requested stopTranscription...");
     stopTranscription();
   } else if (message.action === "startCaptureFromContent") {
     console.log("Content script requested capture for tab:", sender.tab.id);
+    console.log("Working with tab: ", sender.tab);
     startTranscriptionForTab(sender.tab.id);
   }
 });
-
-// Start transcription from the currently active audible tab
-async function startTranscription() {
-  if (transcriptionEnabled) {
-    console.warn("Transcription is already enabled.");
-    return;
-  }
-  transcriptionEnabled = true;
-
-  startWebSocket();
-  try {
-    const activeTab = await getActiveAudibleTab();
-    if (!activeTab) {
-      console.error("No valid audible tab found. Stopping transcription.");
-      stopTranscription();
-      return;
-    }
-    console.log("Using active tab for capture:", activeTab);
-    await startCaptureForTab(activeTab.id);
-  } catch (err) {
-    console.error("Error starting transcription:", err);
-    stopTranscription();
-  }
-}
 
 // Start transcription for a specific tab (e.g., content script call)
 async function startTranscriptionForTab(tabId) {
@@ -140,30 +114,6 @@ function stopTranscription() {
     capturedStream = null;
   }
   console.log("Transcription fully stopped.");
-}
-
-// Identify the currently active audible tab
-function getActiveAudibleTab() {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs.length) {
-        resolve(null);
-        return;
-      }
-      const tab = tabs[0];
-      if (!tab.url || !tab.url.startsWith("http")) {
-        console.error("Tab restricted or invalid:", tab.url);
-        resolve(null);
-        return;
-      }
-      if (!tab.audible) {
-        console.error("Tab not currently audible.");
-        resolve(null);
-        return;
-      }
-      resolve(tab);
-    });
-  });
 }
 
 // "Invoke" the tab to satisfy user gesture constraints
