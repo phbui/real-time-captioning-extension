@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 function startTranscription() {
   if (transcriptionEnabled) return;
 
-  socket = new WebSocket("ws://127.0.0.1:5000/transcribe");
+  socket = new WebSocket("ws://3.141.7.60:5000/transcribe");
 
   socket.onopen = () => {
     transcriptionEnabled = true;
