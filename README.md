@@ -49,7 +49,7 @@ A WebSocket server that takes audio input and transcribes it.
    pip install -r requirements.txt
    ```
 
-   4. Run Websocket server:
+4. Run Websocket server:
 
    ```bash
    python websocket.py
