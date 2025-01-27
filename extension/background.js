@@ -1,5 +1,3 @@
-let socket = null;
-
 chrome.action.onClicked.addListener(async (tab) => {
   console.log("Extension icon clicked. Tab info:", tab);
 
@@ -41,7 +39,6 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
     chrome.action.setIcon({ path: "assets/mic_disabled.png" });
     console.log("Icon updated to indicate recording stopped.");
-    stopWebSocket();
     return;
   }
 
@@ -72,59 +69,6 @@ chrome.action.onClicked.addListener(async (tab) => {
   chrome.action.setIcon({ path: "assets/mic_enabled.png" });
   console.log("Icon updated to indicate recording started.");
 });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  switch (message.action) {
-    case "audioChunk":
-      handleAudioChunk(message.data);
-      sendResponse({ success: true });
-      break;
-
-    default:
-      console.warn("Unknown message action:", message.action);
-      break;
-  }
-  return true; // Indicates asynchronous response
-});
-
-function handleAudioChunk(data) {
-  const blob = new Blob([data], { type: "audio/webm" });
-  console.log("Received audio chunk from content script:", blob);
-
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    console.log("Sending audio chunk to WebSocket...");
-    //socket.send(blob);
-  }
-}
-
-function startWebSocket() {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    console.warn("WebSocket is already open.");
-    return;
-  }
-
-  console.log("Opening WebSocket connection...");
-  socket = new WebSocket("ws://3.141.7.60:5000/transcribe");
-
-  socket.onopen = () => console.log("WebSocket connection established.");
-  socket.onerror = (err) => console.error("WebSocket error:", err);
-  socket.onmessage = (event) => {
-    console.log("Received transcription:", event.data);
-    updateCaption(event.data);
-  };
-  socket.onclose = () => {
-    console.log("WebSocket connection closed.");
-    socket = null;
-  };
-}
-
-function stopWebSocket() {
-  if (socket) {
-    console.log("Closing WebSocket connection...");
-    socket.close();
-    socket = null;
-  }
-}
 
 function updateCaption(text) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

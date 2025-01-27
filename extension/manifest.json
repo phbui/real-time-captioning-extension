@@ -25,6 +25,10 @@
     {
       "resources": ["assets/mic_disabled.png", "assets/mic_enabled.png"],
       "matches": ["<all_urls>"]
+    },
+    {
+      "resources": ["offscreen/pcm-worklet.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

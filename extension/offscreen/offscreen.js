@@ -13,15 +13,23 @@ chrome.runtime.onMessage.addListener(async (message) => {
   }
 });
 
-let recorder;
-let data = [];
+let socket = null;
+let audioCtx = null;
+let audioWorkletNode = null;
+let sourceNode = null;
 
 async function startRecording(streamId) {
-  if (recorder?.state === "recording") {
-    throw new Error("Called startRecording while recording is in progress.");
+  // If we already have a context, skip
+  if (audioCtx) {
+    console.warn("Recording is already in progress.");
+    return;
   }
 
-  const media = await navigator.mediaDevices.getUserMedia({
+  // 1) Start WebSocket
+  startWebSocket();
+
+  // 2) Capture tab audio
+  const mediaStream = await navigator.mediaDevices.getUserMedia({
     audio: {
       mandatory: {
         chromeMediaSource: "tab",
@@ -30,38 +38,36 @@ async function startRecording(streamId) {
     },
   });
 
-  // Continue to play the captured audio to the user.
-  const output = new AudioContext();
-  const source = output.createMediaStreamSource(media);
-  source.connect(output.destination);
+  // 3) Create AudioContext and load our AudioWorklet module
+  audioCtx = new AudioContext();
+  await audioCtx.audioWorklet.addModule(
+    chrome.runtime.getURL("offscreen/pcm-worklet.js")
+  );
 
-  // Start recording.
-  recorder = new MediaRecorder(media, { mimeType: "audio/webm" });
-  recorder.ondataavailable = async (e) => {
-    const arrayBuffer = await e.data.arrayBuffer();
-    chrome.runtime.sendMessage({
-      action: "audioChunk",
-      data: arrayBuffer,
-    });
+  // 4) Create a MediaStream source from the captured stream
+  sourceNode = audioCtx.createMediaStreamSource(mediaStream);
 
-    //data.push(e.data);
+  // 5) Create the AudioWorkletNode using the processor name we’ll define below
+  audioWorkletNode = new AudioWorkletNode(audioCtx, "pcm-worklet-processor", {
+    numberOfInputs: 1, // 1 input from the media stream
+    numberOfOutputs: 1, // 1 output to the user
+    outputChannelCount: [2], // Stereo output
+  });
+
+  // 6) Listen for audio data messages from the AudioWorkletProcessor
+  audioWorkletNode.port.onmessage = (event) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    const floatSamples = event.data; // Mono samples received
+    const int16Samples = convertFloat32ToInt16(floatSamples);
+    socket.send(int16Samples);
   };
-  /*   recorder.onstop = () => {
-    const blob = new Blob(data, { type: "audio/webm" });
-    window.open(URL.createObjectURL(blob), "_blank");
 
-    // Clear state ready for next recording
-    recorder = undefined;
-    data = [];
-  }; */
-  recorder.start(200);
+  // 7) Connect the graph: source -> worklet -> destination
+  //    This lets the user hear the tab audio while also extracting PCM.
+  sourceNode.connect(audioWorkletNode);
+  audioWorkletNode.connect(audioCtx.destination);
 
-  // Record the current state in the URL. This provides a very low-bandwidth
-  // way of communicating with the service worker (the service worker can check
-  // the URL of the document and see the current recording state). We can't
-  // store that directly in the service worker as it may be terminated while
-  // recording is in progress. We could write it to storage but that slightly
-  // increases the risk of things getting out of sync.
+  // Update URL hash to note we’re “recording”
   window.location.hash = "recording";
 }
 
@@ -71,6 +77,8 @@ async function stopRecording() {
   // Stopping the tracks makes sure the recording icon in the tab is removed.
   recorder.stream.getTracks().forEach((t) => t.stop());
 
+  stopWebSocket();
+
   // Update current state in URL
   window.location.hash = "";
 
@@ -79,4 +87,46 @@ async function stopRecording() {
   // to avoid keeping a document around unnecessarily. Here we avoid that to
   // make sure the browser keeps the Object URL we create (see above) and to
   // keep the sample fairly simple to follow.
+}
+
+function handleAudioChunk(data) {
+  // data is Uint8Array
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(data); // Send the raw binary data directly
+  }
+}
+
+function convertFloat32ToInt16(float32Array) {
+  const len = float32Array.length;
+  const int16Buffer = new Int16Array(len);
+  for (let i = 0; i < len; i++) {
+    let s = Math.max(-1, Math.min(1, float32Array[i]));
+    int16Buffer[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+  return int16Buffer;
+}
+
+function startWebSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn("WebSocket is already open.");
+    return;
+  }
+
+  console.log("Opening WebSocket connection...");
+  socket = new WebSocket("ws://localhost:8765");
+
+  socket.onopen = () => console.log("WebSocket connection established.");
+  socket.onerror = (err) => console.error("WebSocket error:", err);
+  socket.onclose = () => {
+    console.log("WebSocket connection closed.");
+    socket = null;
+  };
+}
+
+function stopWebSocket() {
+  if (socket) {
+    console.log("Closing WebSocket connection...");
+    socket.close();
+    socket = null;
+  }
 }
