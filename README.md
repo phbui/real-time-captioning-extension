@@ -40,7 +40,7 @@ A WebSocket server that takes audio input and transcribes it.
    ```bash
    python -m venv venv
    source venv/bin/activate   # For macOS/Linux
-   venv\Scripts\activate# For Windows
+   venv\Scripts\activate # For Windows
    ```
 
 3. Install dependancies:
