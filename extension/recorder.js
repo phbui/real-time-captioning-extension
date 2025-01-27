@@ -1,7 +1,6 @@
 let mediaRecorder = null;
 let audioStream = null;
 let isCapturing = false;
-let audioElement = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "startMediaCapture") {
@@ -36,26 +35,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           );
         });
 
-        // Play audio via <audio> element
-        if (!audioElement) {
-          audioElement = document.createElement("audio");
-          audioElement.controls = false;
-          audioElement.style.display = "none";
-          document.body.appendChild(audioElement);
-        }
-        audioElement.srcObject = stream;
-        audioElement.autoplay = true;
-        audioElement.muted = false;
-        audioElement.volume = 1.0;
-
-        audioElement.addEventListener("play", () => {
-          console.log("Audio element started playing.");
-        });
-        audioElement.addEventListener("error", (e) => {
-          console.error("Audio playback error:", e);
-        });
-
-        // Optional: Route audio through AudioContext
         const audioContext = new AudioContext();
         const audioSource = audioContext.createMediaStreamSource(stream);
         audioSource.connect(audioContext.destination);

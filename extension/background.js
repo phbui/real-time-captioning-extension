@@ -9,7 +9,6 @@ chrome.action.onClicked.addListener(async (tab) => {
   const { isTranscribing } = await chrome.storage.local.get("isTranscribing");
   const newTranscribingState = !isTranscribing;
   activeTabId = tab.id;
-  await chrome.storage.local.set({ isTranscribing: newTranscribingState });
 
   if (newTranscribingState) {
     console.log("Starting transcription...");
@@ -43,7 +42,8 @@ async function resetTranscriptionState() {
 }
 
 // Start transcription for the active tab
-function startTranscription(tab) {
+async function startTranscription(tab) {
+  await chrome.storage.local.set({ isTranscribing: false });
   chrome.action.setIcon({ path: "assets/mic_enabled.png" });
   chrome.action.setTitle({ title: "Disable transcription" });
 
