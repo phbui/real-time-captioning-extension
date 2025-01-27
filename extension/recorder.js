@@ -5,9 +5,8 @@ let isCapturing = false;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "startMediaCapture") {
     if (isCapturing) {
-      console.warn("Media capture is already running.");
-      sendResponse({ success: false, error: "Media capture already running." });
-      return;
+      console.log("Restarting capture is already running.");
+      mediaRecorder = null;
     }
 
     console.log("Starting media capture...");
