@@ -4,6 +4,7 @@ import whisper
 import torch
 import threading
 from torchaudio.functional import resample
+from datetime import datetime 
 
 # Whisper model initialization (uses GPU if available)
 # You can choose 'tiny', 'base', 'small', 'medium', 'large', etc.
@@ -73,7 +74,8 @@ def transcribe_audio():
 
         # Run Whisper transcription
         result = model.transcribe(audio_for_whisper, fp16=False)
-        print("Transcription:", result["text"])
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}]: {result['text']}")
 
 
 if __name__ == "__main__":
