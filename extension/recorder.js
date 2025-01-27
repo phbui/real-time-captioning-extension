@@ -1,7 +1,14 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "startMediaCapture") {
-    console.log("Starting media capture...");
+let captioning = false;
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "stopMediacapture") {
+    captioning = false;
+  }
+
+  if (message.action === "startMediaCapture") {
+    captioning = true;
+
+    console.log("Starting media capture...");
     navigator.mediaDevices
       .getUserMedia({
         audio: {
@@ -21,14 +28,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // Set up MediaRecorder for capturing the audio
         const mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.ondataavailable = async (e) => {
-          // Send audio chunks to the background script for WebSocket streaming
-          const arrayBuffer = await e.data.arrayBuffer();
+          if (captioning) {
+            // Send audio chunks to the background script for WebSocket streaming
+            const arrayBuffer = await e.data.arrayBuffer();
 
-          // Send the ArrayBuffer to background.js
-          chrome.runtime.sendMessage({
-            action: "audioChunk",
-            data: arrayBuffer,
-          });
+            // Send the ArrayBuffer to background.js
+            chrome.runtime.sendMessage({
+              action: "audioChunk",
+              data: arrayBuffer,
+            });
+          }
         };
 
         mediaRecorder.start(200); // Record in 200ms chunks
