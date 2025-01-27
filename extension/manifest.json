@@ -3,7 +3,7 @@
   "name": "Caption Enrichment",
   "version": "1.0",
   "description": "A captioning system that adds extra context for users.",
-  "permissions": ["tabs", "tabCapture", "activeTab", "scripting", "storage"],
+  "permissions": ["tabCapture", "offscreen"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -25,12 +25,6 @@
     {
       "resources": ["assets/mic_disabled.png", "assets/mic_enabled.png"],
       "matches": ["<all_urls>"]
-    }
-  ],
-  "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "js": ["recorder.js"]
     }
   ]
 }
