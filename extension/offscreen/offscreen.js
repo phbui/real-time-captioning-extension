@@ -37,16 +37,22 @@ async function startRecording(streamId) {
 
   // Start recording.
   recorder = new MediaRecorder(media, { mimeType: "audio/webm" });
-  recorder.ondataavailable = (event) => data.push(event.data);
-  recorder.onstop = () => {
+  recorder.ondataavailable = async (e) => {
+    const arrayBuffer = await e.data.arrayBuffer();
+    chrome.runtime.sendMessage({
+      action: "audioChunk",
+      data: arrayBuffer,
+    });
+  };
+  /*   recorder.onstop = () => {
     const blob = new Blob(data, { type: "audio/webm" });
     window.open(URL.createObjectURL(blob), "_blank");
 
     // Clear state ready for next recording
     recorder = undefined;
     data = [];
-  };
-  recorder.start();
+  }; */
+  recorder.start(200);
 
   // Record the current state in the URL. This provides a very low-bandwidth
   // way of communicating with the service worker (the service worker can check
