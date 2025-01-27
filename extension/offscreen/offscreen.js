@@ -43,6 +43,8 @@ async function startRecording(streamId) {
       action: "audioChunk",
       data: arrayBuffer,
     });
+
+    //data.push(e.data);
   };
   /*   recorder.onstop = () => {
     const blob = new Blob(data, { type: "audio/webm" });

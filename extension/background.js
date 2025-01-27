@@ -1,3 +1,5 @@
+let socket = null;
+
 chrome.action.onClicked.addListener(async (tab) => {
   console.log("Extension icon clicked. Tab info:", tab);
 
@@ -39,6 +41,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
     chrome.action.setIcon({ path: "assets/mic_disabled.png" });
     console.log("Icon updated to indicate recording stopped.");
+    stopWebSocket();
     return;
   }
 
