@@ -4,8 +4,6 @@ let isCapturing = false;
 let audioElement = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message);
-
   if (message.action === "startMediaCapture") {
     if (isCapturing) {
       console.warn("Media capture is already running.");
