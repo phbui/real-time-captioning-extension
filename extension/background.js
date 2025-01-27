@@ -4,19 +4,20 @@ let transcriptionEnabled = false;
 let activeTabId = null;
 
 // Handle extension button clicks
-chrome.action.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener(async (tab) => {
   console.log("Extension button clicked:", tab);
-
+  const { isTranscribing } = await chrome.storage.local.get("isTranscribing");
+  const newTranscribingState = !isTranscribing;
   activeTabId = tab.id;
+  await chrome.storage.local.set({ isTranscribing: newTranscribingState });
 
-  if (!isTranscribing) {
+  if (newTranscribingState) {
     console.log("Starting transcription...");
     startTranscription(tab);
   } else {
     console.log("Stopping transcription...");
-    stopTranscription(tab.id);
+    resetTranscriptionState();
   }
-  isTranscribing = !isTranscribing;
 });
 
 // Central listener for runtime messages
@@ -27,11 +28,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: true });
       break;
 
-    case "stopMediacapture":
-      console.log("Stopping media capture on content script...");
-      sendResponse({ success: true });
-      break;
-
     default:
       console.warn("Unknown message action:", message.action);
       break;
@@ -39,21 +35,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true; // Indicates asynchronous response
 });
 
-// Handle tab and window focus changes to reset transcription state
-chrome.tabs.onActivated.addListener(resetTranscriptionState);
-chrome.windows.onFocusChanged.addListener((windowId) => {
-  if (windowId !== chrome.windows.WINDOW_ID_NONE) {
-    resetTranscriptionState();
-  }
-});
-
 // Reset transcription state
-function resetTranscriptionState() {
-  if (isTranscribing) {
-    console.log("Resetting transcription state...");
-    stopTranscription(activeTabId);
-    isTranscribing = false;
-  }
+async function resetTranscriptionState() {
+  console.log("Resetting transcription state...");
+  stopTranscription();
+  await chrome.storage.local.set({ isTranscribing: false });
 }
 
 // Start transcription for the active tab
@@ -73,24 +59,34 @@ function startTranscription(tab) {
 }
 
 // Stop transcription for the active tab
-function stopTranscription(tabId) {
+function stopTranscription() {
   chrome.action.setIcon({ path: "assets/mic_disabled.png" });
   chrome.action.setTitle({ title: "Enable transcription" });
 
   stopWebSocket();
 
-  chrome.tabs.sendMessage(tabId, { action: "stopMediacapture" }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.warn(
-        "Error stopping media capture:",
-        chrome.runtime.lastError.message
+  // Query all tabs in the current window
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach((tab) => {
+      // Send the stopMediacapture message to each tab
+      chrome.tabs.sendMessage(
+        tab.id,
+        { action: "stopMediaCapture" },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn(
+              `Error stopping media capture on tab ${tab.id}:`,
+              chrome.runtime.lastError.message
+            );
+          } else {
+            console.log(`Media capture stopped on tab ${tab.id}:`, response);
+          }
+        }
       );
-    } else {
-      console.log("Media capture stopped:", response);
-    }
+    });
   });
 
-  console.log("Transcription fully stopped.");
+  console.log("Transcription fully stopped across all tabs.");
 }
 
 // Start capturing audio from the specified tab
