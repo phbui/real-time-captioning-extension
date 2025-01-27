@@ -86,7 +86,7 @@ def transcribe_loop():
         # If using the built-in approach with file paths, you'd need to write to a temp file,
         # but we can pass raw audio as a torch tensor with the "transcribe" convenience.
 
-        print(result)
+        print(result["text"])
 
 if __name__ == "__main__":
     asyncio.run(main())

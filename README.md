@@ -17,7 +17,7 @@ A Chrome extension that captures audio and sends it to a WebSocket server.
 1. Go to `chrome://extensions` in Chrome.
 2. Press **Load Unpacked**.
 3. Load the entire `extension` folder.
-4. An microphone icon should appear in your extension toolbar.
+4. A microphone icon should appear in your extension toolbar.
 5. Ensure the WebSocket server is running.
 
 ## Secret Keys

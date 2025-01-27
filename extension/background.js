@@ -33,10 +33,10 @@ chrome.action.onClicked.addListener(async (tab) => {
     console.log(
       "Recording is active. Sending stop message to offscreen document."
     );
-    chrome.runtime.sendMessage({
-      type: "stop-recording",
-      target: "offscreen",
-    });
+    if (await chrome.offscreen.hasDocument()) {
+      await chrome.offscreen.closeDocument();
+      console.log("Offscreen document closed.");
+    }
     chrome.action.setIcon({ path: "assets/mic_disabled.png" });
     console.log("Icon updated to indicate recording stopped.");
     return;

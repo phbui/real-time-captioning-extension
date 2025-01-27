@@ -4,9 +4,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
       case "start-recording":
         startRecording(message.data);
         break;
-      case "stop-recording":
-        stopRecording();
-        break;
       default:
         throw new Error("Unrecognized message:", message.type);
     }
@@ -69,24 +66,6 @@ async function startRecording(streamId) {
 
   // Update URL hash to note we’re “recording”
   window.location.hash = "recording";
-}
-
-async function stopRecording() {
-  recorder.stop();
-
-  // Stopping the tracks makes sure the recording icon in the tab is removed.
-  recorder.stream.getTracks().forEach((t) => t.stop());
-
-  stopWebSocket();
-
-  // Update current state in URL
-  window.location.hash = "";
-
-  // Note: In a real extension, you would want to write the recording to a more
-  // permanent location (e.g IndexedDB) and then close the offscreen document,
-  // to avoid keeping a document around unnecessarily. Here we avoid that to
-  // make sure the browser keeps the Object URL we create (see above) and to
-  // keep the sample fairly simple to follow.
 }
 
 function handleAudioChunk(data) {
