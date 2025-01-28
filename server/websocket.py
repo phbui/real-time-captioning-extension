@@ -1,6 +1,5 @@
 import asyncio
 import websockets
-import sys
 import pyaudio
 import numpy as np
 import whisper
@@ -8,7 +7,6 @@ import torch
 import threading
 import webrtcvad
 import logging
-import wave
 from datetime import datetime, timedelta
 # Whisper model initialization (uses GPU if available)
 model = whisper.load_model("turbo", device="cuda" if torch.cuda.is_available() else "cpu")
