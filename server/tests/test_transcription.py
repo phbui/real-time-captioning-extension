@@ -124,8 +124,6 @@ class TranscriptionThread(QThread):
                 )
                 text = result["text"].strip()
 
-                print(result)
-
                 # If the phrase is complete, start a new transcription line
                 if phrase_complete:
                     transcription.append(text)
