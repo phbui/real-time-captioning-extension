@@ -4,10 +4,10 @@ import numpy as np
 import whisper
 import torch
 import threading
-from torchaudio.functional import resample
 import webrtcvad
 import logging
 import wave
+from datetime import datetime, timedelta
 from PyQt6.QtWidgets import QApplication, QTextEdit, QVBoxLayout, QWidget, QPushButton, QFileDialog
 from PyQt6.QtCore import QThread, pyqtSignal
 
@@ -24,8 +24,8 @@ INPUT_SAMPLE_RATE = 48000  # Microphone sample rate
 WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
 CHANNELS = 1  # Mono audio
 FORMAT = pyaudio.paInt16  # 16-bit PCM
-FRAME_DURATION_MS = 20  # Frame duration in ms (10, 20, or 30 ms)
-CHUNK_SIZE = int(INPUT_SAMPLE_RATE * FRAME_DURATION_MS / 1000)  # Samples per chunk
+CHUNK_SIZE = int(INPUT_SAMPLE_RATE * 0.02)  # 20ms frames
+PHRASE_TIMEOUT = 1.0  # Seconds of silence to consider as a new phrase
 
 # Initialize PyAudio
 logging.info("Initializing PyAudio...")
@@ -47,9 +47,7 @@ vad.set_mode(2)  # Moderate aggressiveness
 audio_buffer = bytearray()  # For transcription
 raw_audio_buffer = bytearray()  # For saving recordings
 buffer_lock = threading.Lock()
-
-# Transcription interval (seconds)
-TRANSCRIBE_INTERVAL = 3.0
+phrase_time = None
 
 
 def is_speech(audio_chunk, sample_rate):
@@ -62,6 +60,7 @@ def is_speech(audio_chunk, sample_rate):
 class AudioCaptureThread(QThread):
     """Thread for capturing audio and appending it to buffers."""
     def run(self):
+        global phrase_time
         logging.info("Starting audio capture thread...")
         while True:
             try:
@@ -70,6 +69,7 @@ class AudioCaptureThread(QThread):
                     with buffer_lock:
                         audio_buffer.extend(raw_data)  # For transcription
                         raw_audio_buffer.extend(raw_data)  # For saving
+                    phrase_time = datetime.utcnow()  # Update the last time speech was detected
             except Exception as e:
                 logging.error(f"Error in audio capture: {e}")
                 break
@@ -80,13 +80,21 @@ class TranscriptionThread(QThread):
     transcription_updated = pyqtSignal(str)
 
     def run(self):
+        global phrase_time
         logging.info("Starting transcription thread...")
-        transcription = ""
+        transcription = [""]
         while self.isRunning():
-            self.msleep(int(TRANSCRIBE_INTERVAL * 1000))  # Wait for interval
+            self.msleep(100)  # Check every 100ms
+
+            now = datetime.utcnow()
+            phrase_complete = False
+
+            # Check if enough time has passed since the last detected speech
+            if phrase_time and now - phrase_time > timedelta(seconds=PHRASE_TIMEOUT):
+                phrase_complete = True
+
             with buffer_lock:
-                if len(audio_buffer) < 0:  
-                    logging.debug("Not enough audio data for transcription. Skipping...")
+                if len(audio_buffer) == 0 or not phrase_complete:
                     continue
                 raw_data = bytes(audio_buffer)
                 audio_buffer.clear()
@@ -94,27 +102,40 @@ class TranscriptionThread(QThread):
             # Convert raw PCM to float32 numpy array
             samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
             audio_tensor = torch.from_numpy(samples)
-            audio_tensor_16k = resample(audio_tensor, orig_freq=INPUT_SAMPLE_RATE, new_freq=WHISPER_SAMPLE_RATE)
+            audio_tensor_16k = torch.nn.functional.interpolate(
+                audio_tensor.unsqueeze(0).unsqueeze(0),
+                scale_factor=WHISPER_SAMPLE_RATE / INPUT_SAMPLE_RATE,
+                mode='linear',
+                align_corners=False
+            ).squeeze().numpy() / 32768.0
 
-            audio_for_whisper = audio_tensor_16k.numpy() / 32768.0  # Normalize to [-1.0, 1.0]
+            try:
+                # Run Whisper transcription
+                result = model.transcribe(
+                    audio_tensor_16k,
+                    fp16=True,
+                    logprob_threshold=-1.0,
+                    no_speech_threshold=2.0,
+                    hallucination_silence_threshold=1.0,
+                    compression_ratio_threshold=1.0,
+                    verbose=True,
+                    language="en",
+                    suppress_tokens=""  # Adjusted to reduce hallucinations
+                )
+                text = result["text"].strip()
 
-            # Run Whisper transcription with context refinement
-            result = model.transcribe(
-                audio_for_whisper,
-                fp16=True,
-                condition_on_previous_text=True,
-                no_speech_threshold=2.0,
-                verbose=True,
-                language="en",
-                suppress_tokens=""  # Adjusted to reduce hallucinations
-            )
+                print(result)
 
-            # Update both refined and accumulated transcriptions
-            new_chunk = result["text"]
-            transcription += new_chunk  # Append the new chunk for context
+                # If the phrase is complete, start a new transcription line
+                if phrase_complete:
+                    transcription.append(text)
+                else:
+                    transcription[-1] = text
 
-            # Emit the refined transcription for display
-            self.transcription_updated.emit(transcription)
+                # Emit updated transcription
+                self.transcription_updated.emit(" ".join(transcription))
+            except Exception as e:
+                logging.error(f"Error in transcription: {e}")
 
 
 class TranscriptionApp(QWidget):
