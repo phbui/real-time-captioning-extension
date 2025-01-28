@@ -139,9 +139,6 @@ async def transcribe_loop():
 
             if phrase_complete:
                 audio_buffer.clear()
-            else:
-                await asyncio.sleep(0.1)
-                continue
 
         # Cancel any ongoing transcription if new data arrives
         if current_task:
