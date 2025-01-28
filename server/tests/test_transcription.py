@@ -120,6 +120,7 @@ class TranscriptionThread(QThread):
                     compression_ratio_threshold=1.0,
                     verbose=True,
                     language="en",
+                    condition_on_previous_text=True,
                     suppress_tokens=""  # Adjusted to reduce hallucinations
                 )
                 text = result["text"].strip()
