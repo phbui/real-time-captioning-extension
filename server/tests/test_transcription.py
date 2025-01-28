@@ -65,11 +65,12 @@ class AudioCaptureThread(QThread):
         while True:
             try:
                 raw_data = stream.read(CHUNK_SIZE, exception_on_overflow=False)
-                if is_speech(raw_data, INPUT_SAMPLE_RATE):
-                    with buffer_lock:
-                        audio_buffer.extend(raw_data)  # For transcription
-                        raw_audio_buffer.extend(raw_data)  # For saving
-                    phrase_time = datetime.utcnow()  # Update the last time speech was detected
+                if isinstance(raw_data, bytes):  # Check if the message contains PCM audio data
+                    if is_speech(raw_data, INPUT_SAMPLE_RATE):
+                        with buffer_lock:
+                            audio_buffer.extend(raw_data)  # For transcription
+                            raw_audio_buffer.extend(raw_data)  # For saving
+                        phrase_time = datetime.utcnow()  # Update the last time speech was detected
             except Exception as e:
                 logging.error(f"Error in audio capture: {e}")
                 break

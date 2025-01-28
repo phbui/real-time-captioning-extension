@@ -36,7 +36,9 @@ async function startRecording(streamId) {
   });
 
   // 3) Create AudioContext and load our AudioWorklet module
-  audioCtx = new AudioContext();
+  audioCtx = new AudioContext({ sampleRate: 16000 });
+  console.log("Sample rate:", audioCtx.sampleRate);
+
   await audioCtx.audioWorklet.addModule(
     chrome.runtime.getURL("offscreen/pcm-worklet.js")
   );
@@ -49,6 +51,9 @@ async function startRecording(streamId) {
     numberOfInputs: 1, // 1 input from the media stream
     numberOfOutputs: 1, // 1 output to the user
     outputChannelCount: [2], // Stereo output
+    processorOptions: {
+      chunkSize: 160, // 10ms of audio at 16kHz
+    },
   });
 
   // 6) Listen for audio data messages from the AudioWorkletProcessor
