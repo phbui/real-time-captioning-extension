@@ -17,6 +17,7 @@ WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
 CHANNELS = 1  # Mono audio
 FORMAT = pyaudio.paInt16  # 16-bit PCM
 PHRASE_TIMEOUT = 0.5  # Seconds of silence to consider as a new phrase
+PHRASE_TIMEOUT = 0.4  # Seconds of silence to consider as a new phrase
 
 # Voice Activity Detector
 vad = webrtcvad.Vad()
@@ -27,6 +28,42 @@ audio_buffer = bytearray()  # For transcription
 buffer_lock = threading.Lock()
 phrase_time = None
 
+# Global variables for managing the transcription task
+current_task = None
+task_lock = threading.Lock()
+
+def cancel_current_task():
+    """Cancel the current transcription task if it's running."""
+    global current_task
+    with task_lock:
+        if current_task and not current_task.done():
+            current_task.cancel()
+            current_task = None
+
+async def transcribe_audio(raw_data):
+    """Run Whisper transcription on the provided raw data."""
+    samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
+    audio_tensor = torch.from_numpy(samples).float().squeeze().numpy() / 32768.0  # Normalize to [-1.0, 1.0]
+
+    try:
+        # Run Whisper transcription
+        result = model.transcribe(
+            audio_tensor,
+            fp16=True,
+            logprob_threshold=-1.0,
+            no_speech_threshold=2.0,
+            hallucination_silence_threshold=1.0,
+            compression_ratio_threshold=1.0,
+            language="en",
+            suppress_tokens=""  # Adjusted to reduce hallucinations
+        )
+        text = result["text"].strip()
+        return text
+
+    except Exception as e:
+        logging.error(f"Error in transcription: {e}")
+        return ""
+    
 def is_speech(audio_chunk, sample_rate):
     """Check if the audio chunk contains speech using WebRTC VAD."""
     try:
@@ -59,21 +96,23 @@ async def handle_connection(websocket):
 
 async def main():
     print("Starting WebSocket server at ws://localhost:8765")
-    # Launch a background thread that periodically transcribes
-    threading.Thread(target=transcribe_loop, daemon=True).start()
+    # Start the transcription loop as an async task
+    asyncio.create_task(transcribe_loop())
 
     # Start the WebSocket server
     async with websockets.serve(handle_connection, "localhost", 8765):
         await asyncio.Future()  # run forever
 
-def transcribe_loop():
+
+async def transcribe_loop():
     """
     Periodically reads the global audio buffer, processes it, and transcribes it using Whisper.
     """
     logging.info("Starting transcription loop...")
     transcription = [""]  # Initialize transcription list
-    while True:
+    global current_task
 
+    while True:
         now = datetime.utcnow()
         phrase_complete = False
 
@@ -82,44 +121,30 @@ def transcribe_loop():
             phrase_complete = True
 
         # Safely extract audio data from the buffer
-        with buffer_lock:
-            if len(audio_buffer) == 0 or not phrase_complete:
-                continue
+        async with asyncio.Lock():  # Use asyncio.Lock for async code
             raw_data = bytes(audio_buffer)
-            audio_buffer.clear()
+            if len(audio_buffer) > 0 and phrase_complete:
+                audio_buffer.clear()
 
-        # Convert raw PCM data to float32 numpy array
-        samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
+        # Cancel any ongoing transcription if new data arrives
+        if current_task:
+            current_task.cancel()
 
-        # Resample from 48kHz to 16kHz
-        audio_tensor = torch.from_numpy(samples).float().squeeze().numpy() / 32768.0  # Normalize to [-1.0, 1.0]
+        # Start a new transcription task
+        async def process_and_print():
+            text = await transcribe_audio(raw_data)
 
-        try:
-            # Run Whisper transcription
-            result = model.transcribe(
-                audio_tensor,
-                fp16=True,
-                logprob_threshold=-1.0,
-                no_speech_threshold=2.0,
-                hallucination_silence_threshold=1.0,
-                compression_ratio_threshold=1.0,
-                verbose=False,
-                language="en",
-                suppress_tokens=""  # Adjusted to reduce hallucinations
-            )
-            text = result["text"].strip()
-
-            # Handle transcription updates
-            if phrase_complete:
-                transcription.append(text)  # Start a new transcription line
+            if (phrase_complete):
+                transcription.append(text)
             else:
                 transcription[-1] = text  # Update the current line
 
-            # Print the transcription for debugging purposes
-            print(" ".join(transcription))
+            print("[Transcription]")
+            print(" ".join(transcription), end="\n")
 
-        except Exception as e:
-            logging.error(f"Error in transcription: {e}")
+        current_task = asyncio.create_task(process_and_print())
+
+        await asyncio.sleep(0.1)  # Prevent excessive CPU usage
 
 if __name__ == "__main__":
     asyncio.run(main())

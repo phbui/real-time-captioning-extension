@@ -35,8 +35,10 @@ async function startRecording(streamId) {
     },
   });
 
+  const inputSampleRate = 48000;
+
   // 3) Create AudioContext and load our AudioWorklet module
-  audioCtx = new AudioContext({ sampleRate: 16000 });
+  audioCtx = new AudioContext({ sampleRate: inputSampleRate });
   console.log("Sample rate:", audioCtx.sampleRate);
 
   await audioCtx.audioWorklet.addModule(
@@ -52,7 +54,7 @@ async function startRecording(streamId) {
     numberOfOutputs: 1, // 1 output to the user
     outputChannelCount: [2], // Stereo output
     processorOptions: {
-      chunkSize: 160, // 10ms of audio at 16kHz
+      inputSampleRate,
     },
   });
 
