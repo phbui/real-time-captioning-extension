@@ -26,7 +26,6 @@ vad.set_mode(2)  # Moderate aggressiveness
 
 # Global buffers
 audio_buffer = bytearray()  # For transcription
-raw_audio_buffer = bytearray()  # For saving recordings
 buffer_lock = threading.Lock()
 phrase_time = None
 
@@ -43,7 +42,6 @@ async def handle_connection(websocket):
             if isinstance(message, bytes):  # Check if the message contains PCM audio data
                 with buffer_lock:
                     audio_buffer.extend(message)  # For transcription
-                    raw_audio_buffer.extend(message)  # For saving
                 phrase_time = datetime.utcnow()  # Update the last time speech was detected
             else:
                 print("Received text:", message)
