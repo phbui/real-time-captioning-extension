@@ -31,14 +31,6 @@ phrase_time = None
 current_task = None
 task_lock = threading.Lock()
 
-def cancel_current_task():
-    """Cancel the current transcription task if it's running."""
-    global current_task
-    with task_lock:
-        if current_task and not current_task.done():
-            current_task.cancel()
-            current_task = None
-
 async def transcribe_audio(raw_data):
     """Run Whisper transcription on the provided raw data."""
     samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
