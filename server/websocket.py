@@ -8,6 +8,9 @@ import threading
 import webrtcvad
 import logging
 from datetime import datetime, timedelta
+import torch.backends.cudnn as cudnn
+cudnn.benchmark = True
+
 # Whisper model initialization (uses GPU if available)
 model = whisper.load_model("turbo", device="cuda" if torch.cuda.is_available() else "cpu")
 
@@ -31,12 +34,28 @@ phrase_time = None
 current_task = None
 task_lock = threading.Lock()
 
+def preprocess_audio(raw_data, sample_rate=WHISPER_SAMPLE_RATE):
+    max_samples = 30 * sample_rate  # 30 seconds of audio
+    samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
+    samples = samples / 32768.0  # Normalize to [-1.0, 1.0]
+
+    # Pad with silence if shorter than 30 seconds
+    if len(samples) < max_samples:
+        padded_samples = np.zeros(max_samples, dtype=np.float32)
+        padded_samples[:len(samples)] = samples
+        return padded_samples
+    else:
+        return samples[:max_samples]  # Truncate if longer
+
+
 async def transcribe_audio(raw_data):
     """Run Whisper transcription on the provided raw data."""
-    samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32)
-    audio_tensor = torch.from_numpy(samples).float().squeeze().numpy() / 32768.0  # Normalize to [-1.0, 1.0]
-
     try:
+        audio_tensor = preprocess_audio(raw_data)
+
+        # Move to GPU for processing
+        audio_tensor = torch.from_numpy(audio_tensor).to("cuda", non_blocking=True)
+
         # Run Whisper transcription
         result = model.transcribe(
             audio_tensor,
@@ -120,6 +139,9 @@ async def transcribe_loop():
 
             if phrase_complete:
                 audio_buffer.clear()
+            else:
+                await asyncio.sleep(0.1)
+                continue
 
         # Cancel any ongoing transcription if new data arrives
         if current_task:
