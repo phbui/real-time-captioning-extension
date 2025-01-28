@@ -16,7 +16,6 @@ model = whisper.load_model("turbo", device="cuda" if torch.cuda.is_available() e
 WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
 CHANNELS = 1  # Mono audio
 FORMAT = pyaudio.paInt16  # 16-bit PCM
-PHRASE_TIMEOUT = 0.5  # Seconds of silence to consider as a new phrase
 PHRASE_TIMEOUT = 0.4  # Seconds of silence to consider as a new phrase
 
 # Voice Activity Detector
@@ -123,7 +122,11 @@ async def transcribe_loop():
         # Safely extract audio data from the buffer
         async with asyncio.Lock():  # Use asyncio.Lock for async code
             raw_data = bytes(audio_buffer)
-            if len(audio_buffer) > 0 and phrase_complete:
+            if len(audio_buffer) == 0:
+                await asyncio.sleep(0.1)
+                continue
+
+            if phrase_complete:
                 audio_buffer.clear()
 
         # Cancel any ongoing transcription if new data arrives
