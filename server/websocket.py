@@ -85,10 +85,10 @@ class TranscriptionServer:
                 if self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT):
                     phrase_complete = True
                 if phrase_complete:
-                    transcription.append("".join(formatted_segments))
+                    transcription.append("".join(formatted_segments) + " ")
                     batch_buffer.clear()
                 else:
-                    transcription[-1] = "".join(formatted_segments)
+                    transcription[-1] = "".join(formatted_segments) + " "
                 print("[Transcription]")
                 print("".join(transcription), end="\n")
             await asyncio.sleep(0.1)
