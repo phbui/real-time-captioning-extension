@@ -50,7 +50,10 @@ async def handle_connection(websocket):
         async for message in websocket:
             if isinstance(message, bytes):  # Check if the message contains PCM audio data
                 if is_speech(message, sample_rate=WHISPER_SAMPLE_RATE): 
-                    await audio_queue.put(message)  # Add to the queue
+                    await audio_queue.put({
+                        "time": datetime.utcnow(),
+                        "audio": message
+                    })
                     phrase_time = datetime.utcnow() 
             else:
                 print("Received text:", message)
@@ -78,10 +81,20 @@ async def transcribe_loop():
 
     while True:
 
-        phrase_complete = False
+        phrase_timestamp = "00:00:00:00"
 
         while not audio_queue.empty():
-            batch_buffer.extend(await audio_queue.get())
+            # Get the next item in the queue (a dict with time and audio data)
+            data = await audio_queue.get()
+            audio_data = data["audio"]
+            
+            if phrase_complete:
+                phrase_timestamp = data["time"]  # Access the timestamp if needed
+            
+            # Extend the batch buffer with the audio data
+            batch_buffer.extend(audio_data)
+
+        phrase_complete = False
 
         if (len(batch_buffer) > 0):
             audio_tensor = preprocess_audio(batch_buffer)
@@ -110,10 +123,10 @@ async def transcribe_loop():
             # Append or update the transcription
             if phrase_complete:
                 # If the phrase is complete, override the current phrase and finalize it
-                transcription.append(text)  # Add the finalized phrase to the transcription
+                transcription.append(f"[{phrase_timestamp}] " + text)  # Add the finalized phrase to the transcription
                 batch_buffer.clear()
             else:
-                transcription[-1] = text  # Update the current line
+                transcription[-1] = (f"[{phrase_timestamp}] " + text)   # Update the current line
 
             print("[Transcription]")
             print(" ".join(transcription), end="\n")
