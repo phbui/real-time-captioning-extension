@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from whisper_model import WhisperModel
 from audio_processor import AudioProcessor
 
-
 class TranscriptionServer:
     def __init__(self, host="localhost", port=8765):
         self.host = host
@@ -18,7 +17,10 @@ class TranscriptionServer:
         self.transcription_queue = asyncio.Queue()
         self.start_time = datetime.utcnow()
         self.phrase_time = None
-        self.transcription_task = None
+        self.socket_task = None
+        self.batch_buffer = bytearray()
+        self.diarization_buffer = bytearray()
+        self.transcription = ['']
     
     async def handle_connection(self, websocket):
         try:
@@ -35,62 +37,91 @@ class TranscriptionServer:
                                 print(message)
                                 print("Starting transcription.")
                                 # Ensure only one transcription task runs at a time
-                                if self.transcription_task and not self.transcription_task.done():
+                                if self.socket_task and not self.socket_task.done():
                                     print("Transcription is already running.")
                                     return
                                 
                                 # Start the transcription loop as a background task
-                                self.transcription_task = asyncio.create_task(self.transcribe_loop())
+                                self.socket_task = asyncio.create_task(self.transcribe_loop())
 
                             case "endTranscription":
                                 print(message)
                                 print("Ending transcription.")
 
-                                # Cancel the running transcription task if it exists
-                                if self.transcription_task:
-                                    self.transcription_task.cancel()
+                                # Cancel the running socket_task if it exists
+                                if self.socket_task:
+                                    self.socket_task.cancel()
                                     try:
-                                        await self.transcription_task  # Ensure proper cancellation
+                                        await self.socket_task  # Ensure proper cancellation
                                     except asyncio.CancelledError:
                                         print("Transcription task successfully stopped.")
-                                    self.transcription_task = None  # Clear reference to the task
+                                    self.socket_task = None  # Clear reference to the task
+
         except websockets.ConnectionClosed:
             print("Client disconnected.")
         except Exception as e:
             print(f"Error in connection: {e}")
     
+    async def run_diarization(self, audio_data, start_time):
+        """
+        Runs diarization asynchronously without blocking transcription.
+        """
+        speaker_segments = self.audio_processor.diarize_speaker(audio_data, start_time)
+        if speaker_segments:
+            print("[Diarization Results]")
+            for segment in speaker_segments:
+                print(f"{segment['start_time']} - {segment['end_time']}: {segment['speaker_id']}")
+
+    async def run_transcription(self, audio_data, start_time):
+        """
+        Runs transcription asynchronously, returning formatted text.
+        """
+        audio_tensor = self.audio_processor.preprocess_audio(audio_data)
+        audio_tensor = torch.from_numpy(audio_tensor).to("cuda", non_blocking=True)
+
+        result = self.model.transcribe(audio_tensor)
+        segments = result.get("segments", [])
+        formatted_segments, _ = self.audio_processor.process_time_segments(start_time, segments)
+
+        now = datetime.utcnow() - self.start_time
+        self.phrase_complete = self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT)
+
+        if self.phrase_complete:
+            self.transcription.append("".join(formatted_segments) + " ")
+            self.batch_buffer.clear()  # Clear all processed transcription data
+        else:
+            self.transcription[-1] = "".join(formatted_segments) + " "
+
+        print("[Transcription]")
+        print("".join(self.transcription))
+
     async def transcribe_loop(self):
         logging.info("Starting transcription loop...")
-        batch_buffer = bytearray()
-        transcription = ['']
+
+        diarization_threshold = self.audio_processor.WHISPER_SAMPLE_RATE * 2  # 1s of audio in bytes
+
         phrase_timestamp = timedelta(0)
-        phrase_complete = False
         
         while True:
             while not self.audio_queue.empty():
                 data = await self.audio_queue.get()
                 audio_data = data["audio"]
-                if phrase_complete:
+                if self.phrase_complete:
                     phrase_timestamp = data["time"]
-                batch_buffer.extend(audio_data)
+                self.batch_buffer.extend(audio_data)
+                self.diarization_buffer.extend(audio_data) 
             
-            phrase_complete = False
-            if batch_buffer:
-                audio_tensor = self.audio_processor.preprocess_audio(batch_buffer)
-                audio_tensor = torch.from_numpy(audio_tensor).to("cuda", non_blocking=True)
-                result = self.model.transcribe(audio_tensor)
-                segments = result.get("segments", [])
-                formatted_segments, _ = self.audio_processor.process_time_segments(phrase_timestamp, segments)
-                now = datetime.utcnow() - self.start_time
-                if self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT):
-                    phrase_complete = True
-                if phrase_complete:
-                    transcription.append("".join(formatted_segments) + " ")
-                    batch_buffer.clear()
-                else:
-                    transcription[-1] = "".join(formatted_segments) + " "
-                print("[Transcription]")
-                print("".join(transcription), end="\n")
+            self.phrase_complete = False
+
+            if self.batch_buffer:
+                transcription_task = asyncio.create_task(self.run_transcription(self.batch_buffer, phrase_timestamp))
+                await transcription_task  # Process transcription without blocking
+
+            # if len(self.diarization_buffer) >= diarization_threshold:
+                # diarization_task = asyncio.create_task(self.run_diarization(self.diarization_buffer, phrase_timestamp))
+                # await diarization_task  # Wait for diarization to complete
+                # self.diarization_buffer = self.diarization_buffer[diarization_threshold:]  # Remove only processed 1s
+
             await asyncio.sleep(0.1)
     
     async def main(self):
