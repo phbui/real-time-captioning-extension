@@ -19,7 +19,7 @@ class TranscriptionServer:
         self.phrase_time = None
         self.socket_task = None
         self.batch_buffer = bytearray()
-        self.diarization_buffer = bytearray()
+        self.diarization_queue = asyncio.Queue() 
         self.transcription = ['']
     
     async def handle_connection(self, websocket):
@@ -61,6 +61,10 @@ class TranscriptionServer:
             print("Client disconnected.")
         except Exception as e:
             print(f"Error in connection: {e}")
+
+    async def enqueue_diarization_data(self, audio_data):
+        """Puts audio data into the diarization queue asynchronously."""
+        await self.diarization_queue.put(audio_data)
     
     async def run_diarization(self, audio_data, start_time):
         """
@@ -86,19 +90,20 @@ class TranscriptionServer:
         now = datetime.utcnow() - self.start_time
         self.phrase_complete = self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT)
 
-        if self.phrase_complete:
-            self.transcription.append("".join(formatted_segments) + " ")
-            self.batch_buffer.clear()  # Clear all processed transcription data
-        else:
-            self.transcription[-1] = "".join(formatted_segments) + " "
 
+        self.transcription[-1] = "".join(formatted_segments) + " "
+        if self.phrase_complete:
+            self.transcription.append("")
+            diarization_data = bytes(self.batch_buffer)
+            asyncio.create_task(self.enqueue_diarization_data(diarization_data))
+            self.batch_buffer.clear()  # Clear all processed transcription data
+        
         print("[Transcription]")
         print("".join(self.transcription))
+        print("===\n")
 
     async def transcribe_loop(self):
         logging.info("Starting transcription loop...")
-
-        diarization_threshold = self.audio_processor.WHISPER_SAMPLE_RATE * 2  # 1s of audio in bytes
 
         phrase_timestamp = timedelta(0)
         
@@ -109,7 +114,6 @@ class TranscriptionServer:
                 if self.phrase_complete:
                     phrase_timestamp = data["time"]
                 self.batch_buffer.extend(audio_data)
-                self.diarization_buffer.extend(audio_data) 
             
             self.phrase_complete = False
 
@@ -117,10 +121,10 @@ class TranscriptionServer:
                 transcription_task = asyncio.create_task(self.run_transcription(self.batch_buffer, phrase_timestamp))
                 await transcription_task  # Process transcription without blocking
 
-            # if len(self.diarization_buffer) >= diarization_threshold:
-                # diarization_task = asyncio.create_task(self.run_diarization(self.diarization_buffer, phrase_timestamp))
-                # await diarization_task  # Wait for diarization to complete
-                # self.diarization_buffer = self.diarization_buffer[diarization_threshold:]  # Remove only processed 1s
+            # if self.diarization_queue:
+            #    diarization_buffer = await self.diarization_queue.get()
+            #    diarization_task = asyncio.create_task(self.run_diarization(diarization_buffer, phrase_timestamp))
+            #    await diarization_task  # Wait for diarization to complete
 
             await asyncio.sleep(0.1)
     

@@ -11,11 +11,11 @@ class AudioProcessor:
     WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
     CHANNELS = 1  # Mono audio
     FORMAT = pyaudio.paInt16  # 16-bit PCM
-    PHRASE_TIMEOUT = 0.3  # Silence duration to determine a new phrase
-    
+    PHRASE_TIMEOUT = 2  # Silence duration to determine a new phrase
+
     def __init__(self):
         self.vad = webrtcvad.Vad()
-        self.vad.set_mode(2)  # Moderate aggressiveness
+        self.vad.set_mode(3)  # Moderate aggressiveness
 
         # Load ECAPA-TDNN for speaker embeddings (GPU optimized)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -31,7 +31,7 @@ class AudioProcessor:
         self.next_speaker_id = 0
 
         # HDBSCAN for online speaker clustering
-        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=2, metric="euclidean", prediction_data=True)
+        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=4, metric="euclidean", prediction_data=True)
     
     def is_speech(self, audio_chunk, sample_rate):
         frame_duration_ms = (len(audio_chunk) / (sample_rate / 1000))
@@ -43,82 +43,89 @@ class AudioProcessor:
         """Extracts speaker embedding using ECAPA-TDNN."""
         audio_tensor = torch.tensor(audio).unsqueeze(0).to(self.device)
         embedding = self.speaker_model.encode_batch(audio_tensor).squeeze(0).detach()
+
+        if embedding.dim() == 1:  
+            embedding = embedding.unsqueeze(0)
+        elif embedding.dim() == 3:  
+            embedding = embedding.squeeze(0)
+
+        embedding = torch.nn.functional.normalize(embedding, p=2, dim=-1)
+
         return embedding
 
     def identify_speaker(self, embedding):
         """Identify or assign a new speaker ID using PyTorch KNN (GPU)."""
+        if embedding.dim() == 3:  # If shape is [1, 1, 192], convert to [1, 192]
+            embedding = embedding.squeeze(0)
+
         if self.speaker_embeddings.shape[0] > 0:
             # Compute pairwise distances
             distances = torch.cdist(embedding.unsqueeze(0), self.speaker_embeddings)
-            nearest_idx = torch.argmin(distances).item()
-            
-            if distances[0, nearest_idx] < 0.5:  # Distance threshold for reidentification
+            nearest_dist, nearest_idx = torch.min(distances, dim=1)
+            print(f"nearest_dist, nearest_idx = {nearest_dist}, {nearest_idx}")
+            nearest_dist = nearest_dist.squeeze().min().item()
+            nearest_idx = nearest_idx.flatten()[0].item()
+
+            if nearest_dist < 1: # Distance threshold for reidentification
                 return self.speaker_ids[nearest_idx]
 
         # If no match is found, register a new speaker
         new_speaker_id = f"SPEAKER_{self.next_speaker_id}"
         self.speaker_ids.append(new_speaker_id)
-        self.speaker_embeddings = torch.cat((self.speaker_embeddings, embedding.unsqueeze(0)), dim=0)
+
+        if self.speaker_embeddings.shape[0] == 0:
+            self.speaker_embeddings = embedding  # Direct assignment if empty
+        else:
+            self.speaker_embeddings = torch.cat((self.speaker_embeddings, embedding), dim=0)
+
         self.next_speaker_id += 1
         return new_speaker_id
 
     def diarize_speaker(self, raw_data, start_time):
         """
-        Takes in 1 second of audio, extracts speaker embeddings, and assigns speaker labels for multiple speakers.
-        Returns a list of speaker labels and timestamps.
+        Processes the entire audio buffer at once (no chunking).
+        Extracts a single speaker embedding and assigns speaker labels.
+        Returns speaker ID and timestamp.
         """
         print("\n🔹 Starting Diarization Process...")
-        
+
         # Convert raw audio to float32
         samples = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32) / 32768.0
-        print(f"🟢 Audio Samples Extracted: {len(samples)} samples")
+        num_samples = len(samples)
+        duration = num_samples / self.WHISPER_SAMPLE_RATE
+        print(f"🟢 Audio Samples Extracted: {num_samples} samples (~{duration:.2f} sec)")
 
-        chunk_size = int(self.WHISPER_SAMPLE_RATE * 0.25)  # 250ms per chunk
-        num_chunks = len(samples) // chunk_size
-        print(f"🟡 Processing {num_chunks} chunks (each {chunk_size} samples)")
+        # 🔥 Extract Speaker Embedding for the Entire Audio Input
+        embedding = self.extract_speaker_embedding(samples)
+        print(f"🔍 Extracted Embedding: {embedding.shape}")
 
-        speaker_results = []
+        # 🔥 Identify Speaker
+        speaker_id = self.identify_speaker(embedding)
+        print(f"👤 Identified Speaker: {speaker_id}")
 
-        for i in range(num_chunks):
-            chunk_start = i * chunk_size
-            chunk_end = (i + 1) * chunk_size
-            audio_chunk = samples[chunk_start:chunk_end]
-            print(f"\n🔹 Processing Chunk {i + 1}/{num_chunks} (Samples {chunk_start} - {chunk_end})")
+        # 🔥 Store for Clustering
+        self.speaker_embeddings = torch.cat((self.speaker_embeddings, embedding), dim=0)
+        print(f"🗂 Updated Speaker Embeddings: {self.speaker_embeddings.shape}")
 
-            # Skip silent segments
-            if not self.is_speech(audio_chunk.tobytes(), self.WHISPER_SAMPLE_RATE):
-                print(f"🔕 Chunk {i + 1}: Skipped (No Speech Detected)")
-                continue
-
-            print(f"🔊 Chunk {i + 1}: Speech Detected, Extracting Embedding...")
-
-            # Extract speaker embedding
-            embedding = self.extract_speaker_embedding(audio_chunk)
-            print(f"🔍 Extracted Embedding: {embedding.shape}")
-
-            # Identify speaker
-            speaker_id = self.identify_speaker(embedding)
-            print(f"👤 Identified Speaker: {speaker_id}")
-
-            # Store for clustering
-            self.speaker_embeddings = torch.cat((self.speaker_embeddings, embedding.unsqueeze(0)), dim=0)
-            print(f"🗂 Updated Speaker Embeddings: {self.speaker_embeddings.shape}")
-
-            # Perform online clustering with HDBSCAN
+        # 🔥 Perform Clustering with HDBSCAN (if enough data exists)
+        if len(self.speaker_embeddings) >= 4:  # Only cluster if enough samples exist
             speaker_labels = self.clusterer.fit_predict(self.speaker_embeddings.cpu().numpy())
-            print(f"📊 Clustering Result: {speaker_labels}")
+        else:
+            speaker_labels = [-1]  # Default label if clustering is not yet possible
+        print(f"📊 Clustering Result: {speaker_labels}")
 
-            # Compute chunk start and end time
-            formatted_start = self.format_time(start_time + timedelta(seconds=i * 0.25))
-            formatted_end = self.format_time(start_time + timedelta(seconds=(i + 1) * 0.25))
-            print(f"🕒 Time Interval: {formatted_start} - {formatted_end}")
+        # 🔥 Compute Start and End Time for the Whole Audio
+        formatted_start = self.format_time(start_time)
+        formatted_end = self.format_time(start_time + timedelta(seconds=duration))
+        print(f"🕒 Time Interval: {formatted_start} - {formatted_end}")
 
-            speaker_results.append({
-                "speaker_id": speaker_id,
-                "start_time": formatted_start,
-                "end_time": formatted_end,
-                "speaker_labels": speaker_labels
-            })
+        # 🔥 Return Processed Diarization Results
+        speaker_results = [{
+            "speaker_id": speaker_id,
+            "start_time": formatted_start,
+            "end_time": formatted_end,
+            "speaker_labels": speaker_labels
+        }]
 
         print("\n✅ Diarization Process Completed.")
         return speaker_results if speaker_results else None  # Return None if no speech detected
