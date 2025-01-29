@@ -93,7 +93,7 @@ class TranscriptionServer:
 
         self.transcription[-1] = "".join(formatted_segments) + " "
         if self.phrase_complete:
-            self.transcription.append("")
+            self.transcription.append("...")
             diarization_data = bytes(self.batch_buffer)
             asyncio.create_task(self.enqueue_diarization_data(diarization_data))
             self.batch_buffer.clear()  # Clear all processed transcription data
