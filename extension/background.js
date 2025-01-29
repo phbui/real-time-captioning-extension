@@ -1,3 +1,32 @@
+let socket = null;
+
+function startWebSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn("WebSocket is already open.");
+    socket.send(JSON.stringify({ action: "startTranscription" }));
+    return;
+  }
+
+  console.log("Opening WebSocket connection...");
+  socket = new WebSocket("ws://localhost:8765");
+
+  socket.onopen = () => {
+    socket.send(JSON.stringify({ action: "startTranscription" }));
+    console.log("WebSocket connection established.");
+  };
+  socket.onerror = (err) => console.error("WebSocket error:", err);
+  socket.onclose = () => {
+    console.log("WebSocket connection closed.");
+    socket = null;
+  };
+}
+
+function stopWebSocket() {
+  socket.send(JSON.stringify({ action: "endTranscription" }));
+  console.log("WebSocket connection closed.");
+  socket = null;
+}
+
 chrome.action.onClicked.addListener(async (tab) => {
   console.log("Extension icon clicked. Tab info:", tab);
 
@@ -14,6 +43,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   // If an offscreen document is not already open, create one.
   if (!offscreenDocument) {
     console.log("No offscreen document found. Creating a new one...");
+    startWebSocket();
     await chrome.offscreen.createDocument({
       url: "offscreen/offscreen.html",
       reasons: ["USER_MEDIA"],
@@ -33,6 +63,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     console.log(
       "Recording is active. Sending stop message to offscreen document."
     );
+    stopWebSocket();
     if (await chrome.offscreen.hasDocument()) {
       await chrome.offscreen.closeDocument();
       console.log("Offscreen document closed.");

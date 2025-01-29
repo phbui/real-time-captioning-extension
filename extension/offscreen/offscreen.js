@@ -75,13 +75,6 @@ async function startRecording(streamId) {
   window.location.hash = "recording";
 }
 
-function handleAudioChunk(data) {
-  // data is Uint8Array
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(data); // Send the raw binary data directly
-  }
-}
-
 function convertFloat32ToInt16(float32Array) {
   const len = float32Array.length;
   const int16Buffer = new Int16Array(len);
@@ -107,12 +100,4 @@ function startWebSocket() {
     console.log("WebSocket connection closed.");
     socket = null;
   };
-}
-
-function stopWebSocket() {
-  if (socket) {
-    console.log("Closing WebSocket connection...");
-    socket.close();
-    socket = null;
-  }
 }
