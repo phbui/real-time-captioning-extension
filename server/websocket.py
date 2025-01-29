@@ -78,10 +78,11 @@ async def transcribe_loop():
     logging.info("Starting transcription loop...")
     batch_buffer = bytearray()  # Buffer for the current phrase
     transcription = ['']
+    phrase_timestamp = "00:00:00:00"
 
     while True:
 
-        phrase_timestamp = "00:00:00:00"
+
 
         while not audio_queue.empty():
             # Get the next item in the queue (a dict with time and audio data)
