@@ -100,4 +100,7 @@ class TranscriptionServer:
 
 if __name__ == "__main__":
     server = TranscriptionServer()
-    asyncio.run(server.main())
+    try:
+        asyncio.run(server.main())  # Run the event loop
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt received, shutting down...")
