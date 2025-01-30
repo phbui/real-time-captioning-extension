@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 import torch
-import logging
 import json
 from datetime import datetime, timedelta
 from whisper_model import WhisperModel
@@ -20,7 +19,8 @@ class TranscriptionServer:
         self.socket_task = None
         self.batch_buffer = bytearray()
         self.diarization_queue = asyncio.Queue() 
-        self.transcription = ['']
+        self.transcription_obj = [{}]
+        self.diarization_obj = {}
     
     async def handle_connection(self, websocket):
         try:
@@ -59,22 +59,82 @@ class TranscriptionServer:
 
         except websockets.ConnectionClosed:
             print("Client disconnected.")
-        except Exception as e:
-            print(f"Error in connection: {e}")
 
-    async def enqueue_diarization_data(self, audio_data):
+    def parse_transcript(self, diarization, transcription):
+        """Aligns transcriptions with speaker diarization based on timestamps."""
+        
+        def parse_timestamp(ts):
+            """Convert timestamp (HH:MM:SS.sss) into seconds."""
+            h, m, s = map(float, ts.split(":"))
+            return h * 3600 + m * 60 + s
+
+        structured_transcript = []
+
+        # 🔹 Process each speaker's segments
+        for speaker, data in diarization.items():
+            for segment in data["time_segments"]:
+                segment_start = parse_timestamp(segment["start_time"])
+                segment_end = parse_timestamp(segment["end_time"])
+                speaker_texts = []
+
+                # 🔹 Find transcription that matches this time segment
+                for transcript_group in transcription:
+                    for entry in transcript_group:
+                        text_start = parse_timestamp(entry["start"])
+                        text_end = parse_timestamp(entry["end"])
+
+                        # 🔹 If transcription overlaps with speaker segment, assign it
+                        if text_start >= segment_start and text_end <= segment_end:
+                            speaker_texts.append(entry["text"])
+
+                if speaker_texts:
+                    structured_transcript.append({
+                        "speaker": speaker,
+                        "start_time": segment["start_time"],
+                        "end_time": segment["end_time"],
+                        "text": " ".join(speaker_texts)
+                    })
+
+        # 🔹 Add any remaining transcription that wasn’t assigned a speaker
+        for transcript_group in transcription:
+            for entry in transcript_group:
+                text_start = parse_timestamp(entry["start"])
+                text_end = parse_timestamp(entry["end"])
+
+                # Check if already assigned in previous processing
+                already_assigned = any(
+                    text_start >= parse_timestamp(t["start_time"]) and text_end <= parse_timestamp(t["end_time"])
+                    for t in structured_transcript
+                )
+
+                if not already_assigned:
+                    structured_transcript.append({
+                        "speaker": "UNKNOWN",  # Assign to UNKNOWN
+                        "start_time": entry["start"],
+                        "end_time": entry["end"],
+                        "text": entry["text"]
+                    })
+
+        # 🔹 Sort transcript chronologically by start time
+        structured_transcript.sort(key=lambda x: parse_timestamp(x["start_time"]))
+
+        return structured_transcript
+
+    def print_transcript(self):
+        final_transcript = self.parse_transcript(self.diarization_obj, self.transcription_obj)
+        print("\n[TRANSCRIPT]")
+        for entry in final_transcript:
+            print(f"[{entry['start_time']}-{entry['end_time']}] {entry['speaker']}: {entry['text']}")
+
+    async def enqueue_diarization_data(self, audio_data, start_time):
         """Puts audio data into the diarization queue asynchronously."""
-        await self.diarization_queue.put(audio_data)
+        await self.diarization_queue.put({"audio": audio_data, "start_time":start_time})
     
     async def run_diarization(self, audio_data, start_time):
         """
-        Runs diarization asynchronously without blocking transcription.
+        Runs diarization asynchronously and updates speaker tracking.
         """
-        speaker_segments = self.audio_processor.diarize_speaker(audio_data, start_time)
-        if speaker_segments:
-            print("[Diarization Results]")
-            for segment in speaker_segments:
-                print(f"{segment['start_time']} - {segment['end_time']}: {segment['speaker_id']}")
+        self.diarization_obj = self.audio_processor.diarize_speaker(audio_data, start_time)
 
     async def run_transcription(self, audio_data, start_time):
         """
@@ -85,27 +145,24 @@ class TranscriptionServer:
 
         result = self.model.transcribe(audio_tensor)
         segments = result.get("segments", [])
-        formatted_segments, _ = self.audio_processor.process_time_segments(start_time, segments)
+        transcription_obj = self.audio_processor.process_time_segments(start_time, segments)
 
         now = datetime.utcnow() - self.start_time
         self.phrase_complete = self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT)
 
 
-        self.transcription[-1] = "".join(formatted_segments) + " "
+        self.transcription_obj[-1] = transcription_obj
         if self.phrase_complete:
-            self.transcription.append("...")
+            self.transcription_obj.append({})
             diarization_data = bytes(self.batch_buffer)
-            asyncio.create_task(self.enqueue_diarization_data(diarization_data))
+            asyncio.create_task(self.enqueue_diarization_data(diarization_data, start_time))
             self.batch_buffer.clear()  # Clear all processed transcription data
-        
-        print("[Transcription]")
-        print("".join(self.transcription))
-        print("===\n")
 
     async def transcribe_loop(self):
-        logging.info("Starting transcription loop...")
+        print("Starting transcription loop...")
 
         phrase_timestamp = timedelta(0)
+        diarization_tasks = set() 
         
         while True:
             while not self.audio_queue.empty():
@@ -121,11 +178,13 @@ class TranscriptionServer:
                 transcription_task = asyncio.create_task(self.run_transcription(self.batch_buffer, phrase_timestamp))
                 await transcription_task  # Process transcription without blocking
 
-            # if self.diarization_queue:
-            #    diarization_buffer = await self.diarization_queue.get()
-            #    diarization_task = asyncio.create_task(self.run_diarization(diarization_buffer, phrase_timestamp))
-            #    await diarization_task  # Wait for diarization to complete
+            if self.diarization_queue.qsize() > 0:
+                diarization_data = await self.diarization_queue.get()
+                diarization_task = asyncio.create_task(self.run_diarization(diarization_data["audio"], diarization_data["start_time"]))
+                diarization_tasks.add(diarization_task)
+                diarization_task.add_done_callback(diarization_tasks.discard)
 
+            self.print_transcript()   
             await asyncio.sleep(0.1)
     
     async def main(self):
