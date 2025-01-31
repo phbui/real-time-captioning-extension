@@ -11,7 +11,7 @@ class AudioProcessor:
     WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
     CHANNELS = 1  # Mono audio
     FORMAT = pyaudio.paInt16  # 16-bit PCM
-    PHRASE_TIMEOUT = 1  # Silence duration to determine a new phrase
+    PHRASE_TIMEOUT = 2  # Silence duration to determine a new phrase
 
     def __init__(self):
         self.vad = webrtcvad.Vad()

@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta
 from whisper_model import WhisperModel
 from audio_processor import AudioProcessor
+from collections import defaultdict
 
 class TranscriptionServer:
     def __init__(self, host="localhost", port=8765):
@@ -60,6 +61,10 @@ class TranscriptionServer:
         except websockets.ConnectionClosed:
             print("Client disconnected.")
 
+    def get_overlap(self, start1, end1, start2, end2):
+        """Calculate overlap duration between two time intervals."""
+        return max(0, min(end1, end2) - max(start1, start2))
+
     def parse_transcript(self, diarization, transcription):
         """Aligns transcriptions with speaker diarization based on timestamps."""
         
@@ -70,21 +75,25 @@ class TranscriptionServer:
 
         structured_transcript = []
 
-        # 🔹 Process each speaker's segments
+        # Process each speaker's segments
         for speaker, data in diarization.items():
             for segment in data["time_segments"]:
                 segment_start = parse_timestamp(segment["start_time"])
                 segment_end = parse_timestamp(segment["end_time"])
                 speaker_texts = []
+                overlap_durations = defaultdict(float) 
 
-                # 🔹 Find transcription that matches this time segment
+                # Find transcription that matches this time segment
                 for transcript_group in transcription:
                     for entry in transcript_group:
                         text_start = parse_timestamp(entry["start"])
                         text_end = parse_timestamp(entry["end"])
 
-                        # 🔹 If transcription overlaps with speaker segment, assign it
-                        if text_start >= segment_start and text_end <= segment_end:
+                        # Compute overlap
+                        overlap = self.get_overlap(text_start, text_end, segment_start, segment_end)
+
+                        if overlap > 0:  # There is some overlap
+                            overlap_durations[speaker] += overlap  # Track total overlap per speaker
                             speaker_texts.append(entry["text"])
 
                 if speaker_texts:
@@ -95,7 +104,7 @@ class TranscriptionServer:
                         "text": " ".join(speaker_texts)
                     })
 
-        # 🔹 Add any remaining transcription that wasn’t assigned a speaker
+        # Add any remaining transcription that wasn’t assigned a speaker
         for transcript_group in transcription:
             for entry in transcript_group:
                 text_start = parse_timestamp(entry["start"])
@@ -115,7 +124,7 @@ class TranscriptionServer:
                         "text": entry["text"]
                     })
 
-        # 🔹 Sort transcript chronologically by start time
+        # Sort transcript chronologically by start time
         structured_transcript.sort(key=lambda x: parse_timestamp(x["start_time"]))
 
         return structured_transcript
@@ -135,6 +144,7 @@ class TranscriptionServer:
         Runs diarization asynchronously and updates speaker tracking.
         """
         self.diarization_obj = self.audio_processor.diarize_speaker(audio_data, start_time)
+        self.print_transcript()
 
     async def run_transcription(self, audio_data, start_time):
         """
@@ -150,13 +160,14 @@ class TranscriptionServer:
         now = datetime.utcnow() - self.start_time
         self.phrase_complete = self.phrase_time and now - self.phrase_time > timedelta(seconds=self.audio_processor.PHRASE_TIMEOUT)
 
-
         self.transcription_obj[-1] = transcription_obj
         if self.phrase_complete:
             self.transcription_obj.append({})
             diarization_data = bytes(self.batch_buffer)
             asyncio.create_task(self.enqueue_diarization_data(diarization_data, start_time))
             self.batch_buffer.clear()  # Clear all processed transcription data
+
+        self.print_transcript()
 
     async def transcribe_loop(self):
         print("Starting transcription loop...")
@@ -183,8 +194,6 @@ class TranscriptionServer:
                 diarization_task = asyncio.create_task(self.run_diarization(diarization_data["audio"], diarization_data["start_time"]))
                 diarization_tasks.add(diarization_task)
                 diarization_task.add_done_callback(diarization_tasks.discard)
-
-            self.print_transcript()   
             await asyncio.sleep(0.1)
     
     async def main(self):
