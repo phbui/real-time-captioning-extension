@@ -64,7 +64,9 @@ class TranscriptionServer:
 
     def get_overlap(self, start1, end1, start2, end2):
         """Calculate overlap duration between two time intervals."""
-        return max(0, min(end1, end2) - max(start1, start2))
+        overlap = max(0, min(end1, end2) - max(start1, start2))
+        total_duration = min(end1 - start1, end2 - start2)  # Normalize by the shorter segment
+        return overlap / total_duration if total_duration > 0 else 0  # Return overlap ratio
 
     def parse_transcript(self, diarization, transcription):
         """Aligns transcriptions with speaker diarization based on timestamps."""
