@@ -17,6 +17,7 @@ class TranscriptionServer:
         self.transcription_queue = asyncio.Queue()
         self.start_time = datetime.utcnow()
         self.phrase_time = None
+        self.phrase_complete = False
         self.socket_task = None
         self.batch_buffer = bytearray()
         self.diarization_queue = asyncio.Queue() 
@@ -135,10 +136,13 @@ class TranscriptionServer:
         for entry in final_transcript:
             print(f"[{entry['start_time']}-{entry['end_time']}] {entry['speaker']}: {entry['text']}")
 
-    async def enqueue_diarization_data(self, audio_data, start_time):
+    def enqueue_diarization_data(self, audio_data, start_time):
         """Puts audio data into the diarization queue asynchronously."""
-        await self.diarization_queue.put({"audio": audio_data, "start_time":start_time})
-    
+        try:
+            self.diarization_queue.put_nowait({"audio": audio_data, "start_time": start_time})
+        except asyncio.QueueFull:
+            print("Warning: Diarization queue is full, dropping data!")  
+
     async def run_diarization(self, audio_data, start_time):
         """
         Runs diarization asynchronously and updates speaker tracking.
@@ -164,7 +168,7 @@ class TranscriptionServer:
         if self.phrase_complete:
             self.transcription_obj.append({})
             diarization_data = bytes(self.batch_buffer)
-            asyncio.create_task(self.enqueue_diarization_data(diarization_data, start_time))
+            self.enqueue_diarization_data(diarization_data, start_time)  
             self.batch_buffer.clear()  # Clear all processed transcription data
 
         self.print_transcript()
@@ -189,11 +193,12 @@ class TranscriptionServer:
                 transcription_task = asyncio.create_task(self.run_transcription(self.batch_buffer, phrase_timestamp))
                 await transcription_task  # Process transcription without blocking
 
-            if self.diarization_queue.qsize() > 0:
+            if not self.diarization_queue.empty():
                 diarization_data = await self.diarization_queue.get()
                 diarization_task = asyncio.create_task(self.run_diarization(diarization_data["audio"], diarization_data["start_time"]))
                 diarization_tasks.add(diarization_task)
                 diarization_task.add_done_callback(diarization_tasks.discard)
+  
             await asyncio.sleep(0.1)
     
     async def main(self):
