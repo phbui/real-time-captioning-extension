@@ -1,5 +1,7 @@
 # Project Overview
 
+![](https://github.com/phbui/real-time-captioning-extension/blob/main/captioning.gif)
+
 ## Builds
 
 Self-explanatory.
