@@ -6,6 +6,12 @@ import torch
 import torch.nn.functional as F
 from datetime import timedelta
 from speechbrain.inference import SpeakerRecognition
+import openai
+import os
+
+openai.api_key = os.getenv("OPENAI_API_KEY") #get api key from laptop OS
+if not openai.api_key:
+    raise ValueError("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
 
 class AudioProcessor:
     WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
@@ -29,6 +35,8 @@ class AudioProcessor:
         self.speaker_history = {}
         self.next_speaker_id = 0
         self.similarity_threshold = 0.5
+
+        openai.api_key = os.getenv("OPENAI_API_KEY") #get api key from laptop OS
 
     def is_speech(self, audio_chunk, sample_rate):
         """Check if the audio contains speech using WebRTC VAD."""
@@ -140,3 +148,32 @@ class AudioProcessor:
             formatted_end = self.format_time(end_time)
             transcript_obj.append({"text": segment['text'], "start": formatted_start, "end": formatted_end})
         return transcript_obj
+    
+    def add_context_w_llm(self, caption):
+        """
+        Adds the context to caption from the LLM based on the prompt given in llm_prompt.txt.
+        """
+        try: 
+            with open("llm_prompt.txt", "r") as file:
+                prompt_template = file.read()
+            prompt = prompt_template.format(caption=caption) # format with caption inserted at end of prompt
+
+            response = openai.ChatCompletion.create(
+                model="gpt-4o-mini", #change for different openai model
+                messages=[{"role": "system", "content": "You are an AI that improves captions for neurodivergent users."},
+                      {"role": "user", "content": prompt}],
+                max_tokens=500,
+                temperature=0.7,
+            )
+
+            contextualized_transcript = response['choices'][0]['message']['content'].strip()
+
+            return contextualized_transcript
+        
+        except FileNotFoundError:
+            raise FileNotFoundError("The prompt file 'llm_prompt.txt' was not found.")
+        except openai.error.OpenAIError as e:
+            raise RuntimeError(f"OpenAI API error: {e}")
+        
+        
+    
