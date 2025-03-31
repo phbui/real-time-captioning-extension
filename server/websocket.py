@@ -23,6 +23,7 @@ class TranscriptionServer:
         self.diarization_queue = asyncio.Queue() 
         self.transcription_obj = [{}]
         self.diarization_obj = {}
+        self.structured_transcription = None
     
     async def handle_connection(self, websocket):
         try:
@@ -50,6 +51,8 @@ class TranscriptionServer:
                                 print(message)
                                 print("Ending transcription.")
 
+                                self.end_transcription()
+
                                 # Cancel the running socket_task if it exists
                                 if self.socket_task:
                                     self.socket_task.cancel()
@@ -61,6 +64,12 @@ class TranscriptionServer:
 
         except websockets.ConnectionClosed:
             print("Client disconnected.")
+
+    def update_transcription(self):
+        self.structured_transcription = self.parse_transcript(self.diarization_obj, self.transcription_obj)
+
+    def end_transcription(self):
+        
 
     def get_overlap(self, start1, end1, start2, end2):
         """Calculate overlap duration between two time intervals."""
@@ -145,12 +154,16 @@ class TranscriptionServer:
         except asyncio.QueueFull:
             print("Warning: Diarization queue is full, dropping data!")  
 
+    def process_transcription(self):
+        self.print_transcript()
+        self.update_transcription()
+
     async def run_diarization(self, audio_data, start_time):
         """
         Runs diarization asynchronously and updates speaker tracking.
         """
         self.diarization_obj = self.audio_processor.diarize_speaker(audio_data, start_time)
-        self.print_transcript()
+        self.process_transcription()
 
     async def run_transcription(self, audio_data, start_time):
         """
@@ -173,7 +186,7 @@ class TranscriptionServer:
             self.enqueue_diarization_data(diarization_data, start_time)  
             self.batch_buffer.clear()  # Clear all processed transcription data
 
-        self.print_transcript()
+        self.process_transcription()
 
     async def transcribe_loop(self):
         print("Starting transcription loop...")
