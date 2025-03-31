@@ -6,15 +6,7 @@ import torch
 import torch.nn.functional as F
 from datetime import timedelta
 from speechbrain.inference import SpeakerRecognition
-import openai
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-openai.api_key = os.getenv("OPENAI_API_KEY") #get api key from laptop OS
-if not openai.api_key:
-    raise ValueError("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+from manager_llm import Manager_LLM
 
 class AudioProcessor:
     WHISPER_SAMPLE_RATE = 16000  # Whisper expects 16kHz
@@ -38,8 +30,7 @@ class AudioProcessor:
         self.speaker_history = {}
         self.next_speaker_id = 0
         self.similarity_threshold = 0.5
-
-        openai.api_key = os.getenv("OPENAI_API_KEY") #get api key from laptop OS
+        self.manager_llm = Manager_LLM()
 
     def is_speech(self, audio_chunk, sample_rate):
         """Check if the audio contains speech using WebRTC VAD."""
@@ -162,22 +153,18 @@ class AudioProcessor:
                 prompt_template = file.read()
             prompt = prompt_template.format(caption=caption, history=history) # format with caption inserted at end of prompt
 
-            response = openai.ChatCompletion.create(
-                model="gpt-4o-mini", #change for different openai model
-                messages=[{"role": "system", "content": "You are an AI that improves captions for neurodivergent users."},
-                      {"role": "user", "content": prompt}],
-                max_tokens=500,
-                temperature=0.7,
-            )
+            response = self.manager_llm.generate_response(prompt)
 
             contextualized_transcript = response['choices'][0]['message']['content'].strip()
 
             return contextualized_transcript
         
+        except Exception as e:
+            print(f"exeption: {e}")
         except FileNotFoundError:
             raise FileNotFoundError("The prompt file 'llm_prompt.txt' was not found.")
-        except openai.error.OpenAIError as e:
-            raise RuntimeError(f"OpenAI API error: {e}")
+
+        
         
         
     
