@@ -1,3 +1,5 @@
+import os
+import time
 import asyncio
 import websockets
 import torch
@@ -69,7 +71,15 @@ class TranscriptionServer:
         self.structured_transcription = self.parse_transcript(self.diarization_obj, self.transcription_obj)
 
     def end_transcription(self):
-        
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        save_dir = os.path.join(current_dir, "transcriptions")
+        os.makedirs(save_dir, exist_ok=True)
+        file_name = "transcription_" + time.time() + ".json"
+        file_path = os.path.join(save_dir, file_name)
+        with open(file_path, "w") as f:
+            json.dump(self.structured_transcription, f, indent=4)
+
+        print(f"Saved to {file_path}") 
 
     def get_overlap(self, start1, end1, start2, end2):
         """Calculate overlap duration between two time intervals."""
