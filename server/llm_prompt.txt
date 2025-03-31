@@ -16,4 +16,6 @@ Example 3:
 Caption: "If you're late again, I swear I’m disowning you."
 Context: hyperbolic
 
-Now, analyze the sentiment of the following caption: {caption}
+Now, analyze the sentiment of the following transcript history and caption: \n\n 
+{history} \n\n 
+{caption}

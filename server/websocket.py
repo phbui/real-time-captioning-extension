@@ -155,9 +155,15 @@ class TranscriptionServer:
             print("Warning: Diarization queue is full, dropping data!")  
 
     def process_transcription(self):
-        self.print_transcript()
+        #self.print_transcript()
         self.update_transcription()
-
+        history = self.structured_transcription # entire transcript of the video
+        caption = self.structured_transcription[-1] # last thing in structured_transcription is last full thing said
+        updated_caption = self.audio_processor.add_context_w_llm(self, caption, history) # adds context to the current time step at the LLM's discretion
+        print("Updated caption:", updated_caption)
+        print("self.print_transcript() results: \n")
+        self.print_transcript() #print at the end (with the context added)
+    
     async def run_diarization(self, audio_data, start_time):
         """
         Runs diarization asynchronously and updates speaker tracking.

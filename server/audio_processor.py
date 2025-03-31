@@ -149,14 +149,15 @@ class AudioProcessor:
             transcript_obj.append({"text": segment['text'], "start": formatted_start, "end": formatted_end})
         return transcript_obj
     
-    def add_context_w_llm(self, caption):
+    def add_context_w_llm(self, caption, history):
         """
         Adds the context to caption from the LLM based on the prompt given in llm_prompt.txt.
         """
+
         try: 
             with open("llm_prompt.txt", "r") as file:
                 prompt_template = file.read()
-            prompt = prompt_template.format(caption=caption) # format with caption inserted at end of prompt
+            prompt = prompt_template.format(caption=caption, history=history) # format with caption inserted at end of prompt
 
             response = openai.ChatCompletion.create(
                 model="gpt-4o-mini", #change for different openai model
