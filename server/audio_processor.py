@@ -8,6 +8,9 @@ from datetime import timedelta
 from speechbrain.inference import SpeakerRecognition
 import openai
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY") #get api key from laptop OS
 if not openai.api_key:

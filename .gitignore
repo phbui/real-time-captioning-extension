@@ -1,2 +1,3 @@
 server/venv/*
 secret_keys/*
+*.env
