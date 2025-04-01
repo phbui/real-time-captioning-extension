@@ -11,7 +11,7 @@ class Manager_LLM():
         self.model_name = model_name
         self.client = InferenceClient(model=model_name, token=secret_key)
 
-    def generate_response(self, prompt: str, max_tokens: int = 256, temperature: float = 0.2) -> str:
+    def generate_response(self, prompt: str, max_tokens: int = 128, temperature: float = 0.2) -> str:
         try:
             messages = [{"role": "user", "content": prompt}]
             response = self.client.chat_completion(

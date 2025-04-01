@@ -1,5 +1,4 @@
 import os
-import uuid
 import time
 import asyncio
 import websockets
@@ -99,54 +98,55 @@ class TranscriptionServer:
         structured_transcript = []
 
         # Process each speaker's segments
-        for speaker, data in diarization.items():
-            for segment in data["time_segments"]:
-                segment_start = parse_timestamp(segment["start_time"])
-                segment_end = parse_timestamp(segment["end_time"])
-                speaker_texts = []
-                overlap_durations = defaultdict(float) 
+        #for speaker, data in diarization.items():
+        #    for segment in data["time_segments"]:
+        #        segment_start = parse_timestamp(segment["start_time"])
+        #        segment_end = parse_timestamp(segment["end_time"])
+        #        speaker_texts = []
+        #        overlap_durations = defaultdict(float) 
 
                 # Find transcription that matches this time segment
-                for transcript_group in transcription:
-                    for entry in transcript_group:
-                        text_start = parse_timestamp(entry["start"])
-                        text_end = parse_timestamp(entry["end"])
+                #for transcript_group in transcription:
+                #    for entry in transcript_group:
+                #        text_start = parse_timestamp(entry["start"])
+                #        text_end = parse_timestamp(entry["end"])
 
                         # Compute overlap
-                        overlap = self.get_overlap(text_start, text_end, segment_start, segment_end)
+                        #overlap = self.get_overlap(text_start, text_end, segment_start, segment_end)
 
-                        if overlap > 0:  # There is some overlap
-                            overlap_durations[speaker] += overlap  # Track total overlap per speaker
-                            speaker_texts.append(entry["text"])
+                        #if overlap > 0:  # There is some overlap
+                        #    overlap_durations[speaker] += overlap  # Track total overlap per speaker
+                        #    speaker_texts.append(entry["text"])
 
-                if speaker_texts:
-                    structured_transcript.append({
-                        "speaker": speaker,
-                        "start_time": segment["start_time"],
-                        "end_time": segment["end_time"],
-                        "text": " ".join(speaker_texts),
-                        "uuid":str(uuid.uuid4()),
-                        "context":""
-                    })
+                #if speaker_texts:
+                #    structured_transcript.append({
+                #        "speaker": speaker,
+                #        "start_time": segment["start_time"],
+                #        "end_time": segment["end_time"],
+                #        "text": " ".join(speaker_texts),
+                #        "context":""
+                #    })
 
         # Add any remaining transcription that wasn’t assigned a speaker
         for transcript_group in transcription:
             for entry in transcript_group:
-                text_start = parse_timestamp(entry["start"])
-                text_end = parse_timestamp(entry["end"])
+                #text_start = parse_timestamp(entry["start"])
+                #text_end = parse_timestamp(entry["end"])
 
                 # Check if already assigned in previous processing
-                already_assigned = any(
-                    text_start >= parse_timestamp(t["start_time"]) and text_end <= parse_timestamp(t["end_time"])
-                    for t in structured_transcript
-                )
+                #already_assigned = any(
+                #    text_start >= parse_timestamp(t["start_time"]) and text_end <= parse_timestamp(t["end_time"])
+                #    for t in structured_transcript
+                #)
 
+                already_assigned = False
                 if not already_assigned:
                     structured_transcript.append({
-                        "speaker": "UNKNOWN",  # Assign to UNKNOWN
+                    #    "speaker": "UNKNOWN",  # Assign to UNKNOWN
                         "start_time": entry["start"],
                         "end_time": entry["end"],
-                        "text": entry["text"]
+                        "text": entry["text"],
+                        "context": entry["context"]
                     })
 
         # Sort transcript chronologically by start time
@@ -155,10 +155,15 @@ class TranscriptionServer:
         return structured_transcript
 
     def print_transcript(self):
-        final_transcript = self.parse_transcript(self.diarization_obj, self.transcription_obj)
         print("\n[TRANSCRIPT]")
-        for entry in final_transcript:
-            print(f"[{entry['start_time']}-{entry['end_time']}] {entry['speaker']}: {entry['text']}")
+        for entry in self.structured_transcription:
+            #print(f"[{entry['start_time']}-{entry['end_time']}] {entry['speaker']}: {entry['text']} ({entry['context']})")
+            context = entry['context']
+            if len(context) > 0:
+                print(f"[{entry['start_time']}-{entry['end_time']}]: {entry['text']} ({context})")
+            else:
+                print(f"[{entry['start_time']}-{entry['end_time']}]: {entry['text']}")
+
 
     def enqueue_diarization_data(self, audio_data, start_time):
         """Puts audio data into the diarization queue asynchronously."""
@@ -169,18 +174,8 @@ class TranscriptionServer:
 
     def process_transcription(self):
         self.update_transcription()
-        history = self.structured_transcription # entire transcript of the video
-        caption = self.structured_transcription[-1] # last thing in structured_transcription is last full thing said
-        caption_uuid = caption['uuid']
-        context = self.audio_processor.add_context_w_llm(caption, history) # adds context to the current time step at the LLM's discretion
-        
-        for item in self.structured_transcription:
-            if item.get("uuid") == caption_uuid:
-                item["context"] = context
-                break 
-        
         #print("self.print_transcript() results: \n")
-        #self.print_transcript() #print at the end (with the context added)
+        self.print_transcript() #print at the end (with the context added)
     
     async def run_diarization(self, audio_data, start_time):
         """
@@ -189,6 +184,10 @@ class TranscriptionServer:
         self.diarization_obj = self.audio_processor.diarize_speaker(audio_data, start_time)
         self.process_transcription()
 
+    def get_context(self, last_transcription):
+        history = self.structured_transcription # entire transcript of the video
+        return self.audio_processor.add_context_w_llm(last_transcription, history) # gets content from llm
+    
     async def run_transcription(self, audio_data, start_time):
         """
         Runs transcription asynchronously, returning formatted text.
@@ -205,9 +204,11 @@ class TranscriptionServer:
 
         self.transcription_obj[-1] = transcription_obj
         if self.phrase_complete:
+            text = ' '.join(obj['text'] for obj in transcription_obj)
+            self.transcription_obj[-1][-1]['context'] = self.get_context(text)
             self.transcription_obj.append({})
-            diarization_data = bytes(self.batch_buffer)
-            self.enqueue_diarization_data(diarization_data, start_time)  
+            #diarization_data = bytes(self.batch_buffer)
+            #self.enqueue_diarization_data(diarization_data, start_time)  
             self.batch_buffer.clear()  # Clear all processed transcription data
 
         self.process_transcription()
@@ -216,7 +217,7 @@ class TranscriptionServer:
         print("Starting transcription loop...")
 
         phrase_timestamp = timedelta(0)
-        diarization_tasks = set() 
+        #diarization_tasks = set() 
         
         while True:
             while not self.audio_queue.empty():
@@ -232,11 +233,11 @@ class TranscriptionServer:
                 transcription_task = asyncio.create_task(self.run_transcription(self.batch_buffer, phrase_timestamp))
                 await transcription_task  # Process transcription without blocking
 
-            if not self.diarization_queue.empty():
-                diarization_data = await self.diarization_queue.get()
-                diarization_task = asyncio.create_task(self.run_diarization(diarization_data["audio"], diarization_data["start_time"]))
-                diarization_tasks.add(diarization_task)
-                diarization_task.add_done_callback(diarization_tasks.discard)
+            #if not self.diarization_queue.empty():
+            #    diarization_data = await self.diarization_queue.get()
+            #    diarization_task = asyncio.create_task(self.run_diarization(diarization_data["audio"], diarization_data["start_time"]))
+            #    diarization_tasks.add(diarization_task)
+            #    diarization_task.add_done_callback(diarization_tasks.discard)
   
             await asyncio.sleep(0.1)
     
