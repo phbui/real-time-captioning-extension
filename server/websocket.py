@@ -185,7 +185,7 @@ class TranscriptionServer:
         self.process_transcription()
 
     def get_context(self, last_transcription):
-        history = self.structured_transcription # entire transcript of the video
+        history = ' '.join(obj['text'] for obj in self.structured_transcription)
         return self.audio_processor.add_context_w_llm(last_transcription, history) # gets content from llm
     
     async def run_transcription(self, audio_data, start_time):
