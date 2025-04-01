@@ -22,9 +22,7 @@ class TranscriptionServer:
         self.phrase_complete = False
         self.socket_task = None
         self.batch_buffer = bytearray()
-        self.diarization_queue = asyncio.Queue() 
         self.transcription_obj = [{}]
-        self.diarization_obj = {}
         self.structured_transcription = None
     
     async def handle_connection(self, websocket):
@@ -68,7 +66,7 @@ class TranscriptionServer:
             print("Client disconnected.")
 
     def update_transcription(self):
-        self.structured_transcription = self.parse_transcript(self.diarization_obj, self.transcription_obj)
+        self.structured_transcription = self.parse_transcript(self.transcription_obj)
 
     def end_transcription(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -76,8 +74,15 @@ class TranscriptionServer:
         os.makedirs(save_dir, exist_ok=True)
         file_name = "transcription_" + str(time.time()) + ".json"
         file_path = os.path.join(save_dir, file_name)
+
+        context_transcription = []
+
+        for transcript in self.structured_transcription:
+            transcript['context'] = self.get_context(transcript['text'], context_transcription)
+            context_transcription.append(transcript)
+
         with open(file_path, "w") as f:
-            json.dump(self.structured_transcription, f, indent=4)
+            json.dump(context_transcription, f, indent=4)
 
         print(f"Saved to {file_path}") 
 
@@ -87,9 +92,7 @@ class TranscriptionServer:
         total_duration = min(end1 - start1, end2 - start2)  # Normalize by the shorter segment
         return overlap / total_duration if total_duration > 0 else 0  # Return overlap ratio
 
-    def parse_transcript(self, diarization, transcription):
-        """Aligns transcriptions with speaker diarization based on timestamps."""
-        
+    def parse_transcript(self, transcription):
         def parse_timestamp(ts):
             """Convert timestamp (HH:MM:SS.sss) into seconds."""
             h, m, s = map(float, ts.split(":"))
@@ -117,35 +120,17 @@ class TranscriptionServer:
     def print_transcript(self):
         print("\n[TRANSCRIPT]")
         for entry in self.structured_transcription:
-            context = entry['context']
-            if len(context) > 0:
-                print(f"[{entry['start_time']}-{entry['end_time']}]: {entry['text']} ({context})")
-            else:
                 print(f"[{entry['start_time']}-{entry['end_time']}]: {entry['text']}")
 
-
-    def enqueue_diarization_data(self, audio_data, start_time):
-        """Puts audio data into the diarization queue asynchronously."""
-        try:
-            self.diarization_queue.put_nowait({"audio": audio_data, "start_time": start_time})
-        except asyncio.QueueFull:
-            print("Warning: Diarization queue is full, dropping data!")  
 
     def process_transcription(self):
         self.update_transcription()
         self.print_transcript() #print at the end (with the context added)
-    
-    async def run_diarization(self, audio_data, start_time):
-        """
-        Runs diarization asynchronously and updates speaker tracking.
-        """
-        self.diarization_obj = self.audio_processor.diarize_speaker(audio_data, start_time)
-        self.process_transcription()
 
-    def get_context(self, last_transcription):
+    def get_context(self, last_transcription, transcription_history):
         history = ''
-        if self.structured_transcription:
-            history = ' '.join(obj['text'] for obj in self.structured_transcription)
+        if transcription_history:
+            history = ' '.join(obj['text'] for obj in transcription_history)
         return self.audio_processor.add_context_w_llm(last_transcription, history) # gets content from llm
     
     async def run_transcription(self, audio_data, start_time):
@@ -164,8 +149,6 @@ class TranscriptionServer:
 
         self.transcription_obj[-1] = transcription_obj
         if self.phrase_complete:
-            text = ' '.join(obj['text'] for obj in transcription_obj)
-            self.transcription_obj[-1][-1]['context'] = self.get_context(text)
             self.transcription_obj.append({})
             self.batch_buffer.clear()  # Clear all processed transcription data
 
@@ -175,7 +158,6 @@ class TranscriptionServer:
         print("Starting transcription loop...")
 
         phrase_timestamp = timedelta(0)
-        #diarization_tasks = set() 
         
         while True:
             while not self.audio_queue.empty():
