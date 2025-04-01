@@ -154,10 +154,7 @@ class AudioProcessor:
             prompt = prompt_template.format(caption=caption, history=history) # format with caption inserted at end of prompt
 
             response = self.manager_llm.generate_response(prompt)
-
-            contextualized_transcript = response['choices'][0]['message']['content'].strip()
-
-            return contextualized_transcript
+            return response
         
         except Exception as e:
             print(f"exeption: {e}")

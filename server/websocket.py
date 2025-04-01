@@ -1,4 +1,5 @@
 import os
+import uuid
 import time
 import asyncio
 import websockets
@@ -74,7 +75,7 @@ class TranscriptionServer:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         save_dir = os.path.join(current_dir, "transcriptions")
         os.makedirs(save_dir, exist_ok=True)
-        file_name = "transcription_" + time.time() + ".json"
+        file_name = "transcription_" + str(time.time()) + ".json"
         file_path = os.path.join(save_dir, file_name)
         with open(file_path, "w") as f:
             json.dump(self.structured_transcription, f, indent=4)
@@ -123,7 +124,9 @@ class TranscriptionServer:
                         "speaker": speaker,
                         "start_time": segment["start_time"],
                         "end_time": segment["end_time"],
-                        "text": " ".join(speaker_texts)
+                        "text": " ".join(speaker_texts),
+                        "uuid":str(uuid.uuid4()),
+                        "context":""
                     })
 
         # Add any remaining transcription that wasn’t assigned a speaker
@@ -168,10 +171,16 @@ class TranscriptionServer:
         self.update_transcription()
         history = self.structured_transcription # entire transcript of the video
         caption = self.structured_transcription[-1] # last thing in structured_transcription is last full thing said
-        updated_caption = self.audio_processor.add_context_w_llm(caption, history) # adds context to the current time step at the LLM's discretion
-        print("Updated caption:", updated_caption)
-        print("self.print_transcript() results: \n")
-        self.print_transcript() #print at the end (with the context added)
+        caption_uuid = caption['uuid']
+        context = self.audio_processor.add_context_w_llm(caption, history) # adds context to the current time step at the LLM's discretion
+        
+        for item in self.structured_transcription:
+            if item.get("uuid") == caption_uuid:
+                item["context"] = context
+                break 
+        
+        #print("self.print_transcript() results: \n")
+        #self.print_transcript() #print at the end (with the context added)
     
     async def run_diarization(self, audio_data, start_time):
         """
