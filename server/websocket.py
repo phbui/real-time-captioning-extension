@@ -50,11 +50,7 @@ class TranscriptionServer:
                             case "endTranscription":
                                 print(message)
                                 print("Ending transcription.")
-
-                                try:
-                                    self.end_transcription()
-                                except Exception as e:
-                                    print(e)
+                                self.end_transcription()
 
                                 # Cancel the running socket_task if it exists
                                 if self.socket_task:
@@ -72,22 +68,25 @@ class TranscriptionServer:
         self.structured_transcription = self.parse_transcript(self.transcription_obj)
 
     def end_transcription(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        save_dir = os.path.join(current_dir, "transcriptions")
-        os.makedirs(save_dir, exist_ok=True)
-        file_name = "transcription_" + str(time.time()) + ".json"
-        file_path = os.path.join(save_dir, file_name)
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            save_dir = os.path.join(current_dir, "transcriptions")
+            os.makedirs(save_dir, exist_ok=True)
+            file_name = "transcription_" + str(time.time()) + ".json"
+            file_path = os.path.join(save_dir, file_name)
 
-        context_transcription = []
+            context_transcription = []
 
-        for transcript in self.structured_transcription:
-            transcript['context'] = self.get_context(transcript['text'], context_transcription)
-            context_transcription.append(transcript)
+            for transcript in self.structured_transcription:
+                transcript['context'] = self.get_context(transcript['text'], context_transcription)
+                context_transcription.append(transcript)
 
-        with open(file_path, "w") as f:
-            json.dump(context_transcription, f, indent=4)
+            with open(file_path, "w") as f:
+                json.dump(context_transcription, f, indent=4)
 
-        print(f"Saved to {file_path}") 
+            print(f"Saved to {file_path}") 
+        except Exception as e:
+            print(e)
 
     def get_overlap(self, start1, end1, start2, end2):
         """Calculate overlap duration between two time intervals."""
@@ -189,4 +188,5 @@ if __name__ == "__main__":
     try:
         asyncio.run(server.main())  # Run the event loop
     except KeyboardInterrupt:
+        server.end_transcription()
         print("KeyboardInterrupt received, shutting down...")
