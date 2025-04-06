@@ -130,9 +130,10 @@ class TranscriptionServer:
     def get_context(self, last_transcription, transcription_history):
         history = ''
         if transcription_history:
-            history = ', '.join(obj['text'] for obj in transcription_history)
-        return self.audio_processor.add_context_w_llm(last_transcription, f"[{history}]") # gets content from llm
-    
+            recent_history = transcription_history[-4:]
+            history = ', '.join(obj['text'] for obj in recent_history)
+        return self.audio_processor.add_context_w_llm(last_transcription, f"[{history}]")
+
     async def run_transcription(self, audio_data, start_time):
         """
         Runs transcription asynchronously, returning formatted text.
