@@ -51,7 +51,10 @@ class TranscriptionServer:
                                 print(message)
                                 print("Ending transcription.")
 
-                                self.end_transcription()
+                                try:
+                                    self.end_transcription()
+                                except Exception as e:
+                                    print(e)
 
                                 # Cancel the running socket_task if it exists
                                 if self.socket_task:
@@ -130,7 +133,7 @@ class TranscriptionServer:
     def get_context(self, last_transcription, transcription_history):
         history = ''
         if transcription_history:
-            recent_history = transcription_history[-4:]
+            recent_history = transcription_history[-4:-1]
             history = ', '.join(obj['text'] for obj in recent_history)
         return self.audio_processor.add_context_w_llm(last_transcription, f"[{history}]")
 

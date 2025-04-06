@@ -1,0 +1,1274 @@
+[
+  {
+    "start_time": "00:00:00.000",
+    "end_time": "00:00:00.060",
+    "text": " Thank you.",
+    "context": "Context: [grateful]"
+  },
+  {
+    "start_time": "00:00:09.528",
+    "end_time": "00:00:11.108",
+    "text": " Hold on.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:00:11.108",
+    "end_time": "00:00:11.608",
+    "text": " That's really impressive.",
+    "context": "Context: [appreciative]"
+  },
+  {
+    "start_time": "00:00:11.608",
+    "end_time": "00:00:12.408",
+    "text": " Thanks.",
+    "context": "Emotional tone: polite\nContext: [pleasantries]"
+  },
+  {
+    "start_time": "00:00:12.408",
+    "end_time": "00:00:14.228",
+    "text": " How do you learn to do the rings?",
+    "context": "Context: None."
+  },
+  {
+    "start_time": "00:00:14.228",
+    "end_time": "00:00:15.408",
+    "text": " I'm from the Bay Area.",
+    "context": "Context: [irrelevant]"
+  },
+  {
+    "start_time": "00:00:19.547",
+    "end_time": "00:00:25.687",
+    "text": " *music playing*",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:00:25.767",
+    "end_time": "00:00:27.087",
+    "text": " What's your drink of choice?",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:00:27.107",
+    "end_time": "00:00:27.927",
+    "text": " Vodka.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:00:27.947",
+    "end_time": "00:00:28.447",
+    "text": " Really?",
+    "context": "Context: [disbelief]"
+  },
+  {
+    "start_time": "00:00:28.467",
+    "end_time": "00:00:30.187",
+    "text": " Yeah. I'm really Caucasian, like that.",
+    "context": "Context: [passive aggressive]"
+  },
+  {
+    "start_time": "00:00:30.207",
+    "end_time": "00:00:31.607",
+    "text": " Mmmhmm. I was gonna say water.",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:00:34.418",
+    "end_time": "00:00:35.418",
+    "text": " Oh girl, no.",
+    "context": "Context: [disappointed]"
+  },
+  {
+    "start_time": "00:00:35.418",
+    "end_time": "00:00:38.618",
+    "text": " Ayyyyy, whaaaat?",
+    "context": "Context: [none]"
+  },
+  {
+    "start_time": "00:00:42.847",
+    "end_time": "00:00:47.947",
+    "text": " * maar jij petits\ufffd barra*",
+    "context": "Context: [racial insensitivity]"
+  },
+  {
+    "start_time": "00:00:47.947",
+    "end_time": "00:00:51.107",
+    "text": " *Thunders doorbell went reality, the killer went back to school*",
+    "context": "Context: [violent]"
+  },
+  {
+    "start_time": "00:00:52.738",
+    "end_time": "00:00:54.098",
+    "text": " No!",
+    "context": "Context: [angry]"
+  },
+  {
+    "start_time": "00:00:54.098",
+    "end_time": "00:00:55.098",
+    "text": " - Why?",
+    "context": "Context: [confused]"
+  },
+  {
+    "start_time": "00:00:55.098",
+    "end_time": "00:00:55.938",
+    "text": " - Because I'm from America, babe.",
+    "context": "Context: [excited]"
+  },
+  {
+    "start_time": "00:00:55.938",
+    "end_time": "00:00:57.918",
+    "text": " The only geography I know is California.",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:01:00.570",
+    "end_time": "00:01:02.130",
+    "text": " Wouldn't that do her?",
+    "context": "Emotional tone: [sarcastic]\n\nSubtext: [mocking]\n\nNon-literal meaning: [insinuating]\n\nContext: [relationship]"
+  },
+  {
+    "start_time": "00:01:02.130",
+    "end_time": "00:01:03.710",
+    "text": " Would you say that you are a romantic person?",
+    "context": "Emotional tone: neutral\nSubtext: none\nNon-literal meaning: none\n\nContext: [romantic question]"
+  },
+  {
+    "start_time": "00:01:03.810",
+    "end_time": "00:01:04.710",
+    "text": " I can't be romantic",
+    "context": "Context: [hesitant]"
+  },
+  {
+    "start_time": "00:01:07.908",
+    "end_time": "00:01:09.788",
+    "text": " it depends on the situation.",
+    "context": "Context: [variable]"
+  },
+  {
+    "start_time": "00:01:09.788",
+    "end_time": "00:01:11.988",
+    "text": " I feel like I need to like be with the right person.",
+    "context": "Context: [romantic relationship]"
+  },
+  {
+    "start_time": "00:01:14.013",
+    "end_time": "00:01:15.613",
+    "text": " because no one really gets my freak,",
+    "context": "Context: [self-deprecating]"
+  },
+  {
+    "start_time": "00:01:15.693",
+    "end_time": "00:01:17.073",
+    "text": " how would you describe your freak?",
+    "context": "Caption:\nHow do you describe your quirks? []."
+  },
+  {
+    "start_time": "00:01:17.153",
+    "end_time": "00:01:17.713",
+    "text": " Probably in good.",
+    "context": "Context needed: None."
+  },
+  {
+    "start_time": "00:01:19.517",
+    "end_time": "00:01:21.317",
+    "text": " - Is, um, New York a romantic based?",
+    "context": "Context: [unclear]\n\nEmotional tone: [neutral]\n\nSubtext/non-literal meaning: [not provided]"
+  },
+  {
+    "start_time": "00:01:21.317",
+    "end_time": "00:01:22.057",
+    "text": " - It can be.",
+    "context": "Caption: [in the context of the conversation, the caption seems to imply that New York could be considered a romantic place.]"
+  },
+  {
+    "start_time": "00:01:22.057",
+    "end_time": "00:01:23.017",
+    "text": " I found single, you know,",
+    "context": "[looking for someone]."
+  },
+  {
+    "start_time": "00:01:23.017",
+    "end_time": "00:01:24.137",
+    "text": " you're \ubc1c\ub9e4, I can't think it just is",
+    "context": "Context: [unclear]"
+  },
+  {
+    "start_time": "00:01:29.128",
+    "end_time": "00:01:30.068",
+    "text": " talks about the people, because so many people,",
+    "context": "Context: [overgeneralization]"
+  },
+  {
+    "start_time": "00:01:30.068",
+    "end_time": "00:01:31.128",
+    "text": " they're up there on ours.",
+    "context": "Context: [ambiguous]"
+  },
+  {
+    "start_time": "00:01:31.128",
+    "end_time": "00:01:32.328",
+    "text": " - Us.",
+    "context": "Context: [release]\n\nEmotional tone: neutral\nSubtext/non-literal meaning: The caption is a simple statement that acknowledges the release of the single \"Us\". No additional context is needed."
+  },
+  {
+    "start_time": "00:01:32.328",
+    "end_time": "00:01:32.948",
+    "text": " - Yeah I'm trying to be British.",
+    "context": "Emotional tone: Neutral\nSubtext/non-literal meaning: Humor\nContext: [British accent]"
+  },
+  {
+    "start_time": "00:01:33.749",
+    "end_time": "00:01:36.789",
+    "text": " Are you quite blind?",
+    "context": "Context: [blunt]"
+  },
+  {
+    "start_time": "00:01:36.789",
+    "end_time": "00:01:38.629",
+    "text": " yeah i'm really blind that's why i'm wearing these glasses",
+    "context": "Emotional tone: Neutral\nSubtext: None\nNon-literal meaning: None"
+  },
+  {
+    "start_time": "00:01:41.627",
+    "end_time": "00:01:43.207",
+    "text": " Are you modeling right now, yes?",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:01:44.227",
+    "end_time": "00:01:47.467",
+    "text": " Say I'm what you think boo I'm selling it everybody gets you a bonus",
+    "context": "Context: [British accent, blindness]"
+  },
+  {
+    "start_time": "00:01:54.068",
+    "end_time": "00:01:54.928",
+    "text": " Sam, is this gluten free?",
+    "context": "[]\n\nThe emotional tone of the caption is neutral, and there is no subtext or non-literal meaning implied. The caption is a simple question seeking information."
+  },
+  {
+    "start_time": "00:01:54.928",
+    "end_time": "00:01:56.108",
+    "text": " I think it is.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:01:56.108",
+    "end_time": "00:01:56.928",
+    "text": " I think he's scared of me.",
+    "context": "Context: [implied]\n\nAnalysis:\nThe emotional tone of the caption is not explicitly stated, but it could be interpreted as having a negative or ominous connotation. The subtext suggests that the speaker may have a fear or apprehension towards the person being referred to. The non-literal meaning could be inferred as a statement of opinion rather than a fact. The brief context of \"implied\" is added to indicate that the statement is not explicitly stated, but rather inferred from the overall tone and subtext."
+  },
+  {
+    "start_time": "00:01:58.898",
+    "end_time": "00:01:59.818",
+    "text": " Do you like Boneless?",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:01:59.818",
+    "end_time": "00:02:01.118",
+    "text": " Yes, babe. I can't eat the bone.",
+    "context": "Context: [jokingly]"
+  },
+  {
+    "start_time": "00:02:02.558",
+    "end_time": "00:02:03.938",
+    "text": " My type model of the year.",
+    "context": "Emotional tone: Uncertainty\nSubtext: The speaker is expressing doubt or hesitation\nContext: [uncertain]"
+  },
+  {
+    "start_time": "00:02:08.857",
+    "end_time": "00:02:12.297",
+    "text": " \"Oh! Mm mm.... Okay, well today's your perfect date then.\"",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:02:12.297",
+    "end_time": "00:02:13.577",
+    "text": " What'd you do to make a date",
+    "context": "[]\n\nEmotional tone: The caption appears to be neutral.\nSubtext: The caption does not seem to have any implied meaning beyond asking for information about what was done to make a date.\nContext: No additional context is needed."
+  },
+  {
+    "start_time": "00:02:14.157",
+    "end_time": "00:02:17.817",
+    "text": " not awkward. my favourite thing to do is not bring my wallet. that's gonna awkward",
+    "context": "Caption: not awkward. [implying the opposite]"
+  },
+  {
+    "start_time": "00:02:18.147",
+    "end_time": "00:02:23.947",
+    "text": " It always makes it awkward when someone got in a date,",
+    "context": "Context: [awkward date]"
+  },
+  {
+    "start_time": "00:02:23.097",
+    "end_time": "00:02:26.537",
+    "text": " And hey, my wife, we're all over the world.",
+    "context": "Context: [long distance relationship]"
+  },
+  {
+    "start_time": "00:02:26.997",
+    "end_time": "00:02:28.337",
+    "text": " And I guess neither did he.",
+    "context": "Emotional tone: neutral\nSubtext/non-literal meaning: ambiguity\nContext: [unclear]"
+  },
+  {
+    "start_time": "00:02:28.997",
+    "end_time": "00:02:29.777",
+    "text": " Humilian Barbays: Humbled me.",
+    "context": "Emotional tone: [positive]\nSubtext: [overcoming a challenge]\nContext: [overcoming a challenge]"
+  },
+  {
+    "start_time": "00:02:30.897",
+    "end_time": "00:02:32.457",
+    "text": "ETEANA ALLER:",
+    "context": "Transcript history: [It always makes it awkward when someone got in a date, And hey, my wife, we're all over the world, And I guess neither did he. Humilian Barbays: Humbled me.]\n\nCaption:\nETEANA ALLER: [awkward, awkward, awkward]\n\nContext: [awkward date, awkward situation, awkward moment]\n\nNote: No additional context is needed as the caption clearly conveys the tone and meaning."
+  },
+  {
+    "start_time": "00:02:32.457",
+    "end_time": "00:02:33.497",
+    "text": " Do you think a fashion show is a good",
+    "context": "[]\n\nExplanation: The caption is ambiguous and can be interpreted in different ways. The context \"fashion show\" could be interpreted as a positive or negative event, and the word \"good\" can also be interpreted as a positive or negative adjective. The context \"humiliated\" from the previous transcript history could provide helpful clarification that the caption is negative, and the word \"bad\" could be added in square brackets to make the meaning clearer."
+  },
+  {
+    "start_time": "00:02:36.517",
+    "end_time": "00:02:37.437",
+    "text": " Nice to fool it off.",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:02:37.437",
+    "end_time": "00:02:38.237",
+    "text": " Hell no.",
+    "context": "Context: [negative]"
+  },
+  {
+    "start_time": "00:02:38.237",
+    "end_time": "00:02:39.577",
+    "text": " Actually, low key yes, I do.",
+    "context": "Context: [passive]"
+  },
+  {
+    "start_time": "00:02:39.577",
+    "end_time": "00:02:41.177",
+    "text": " I've always had this like breakey.",
+    "context": "Context: [awkward]"
+  },
+  {
+    "start_time": "00:02:44.127",
+    "end_time": "00:02:47.367",
+    "text": " dream of having sex act through the fashion show.",
+    "context": "Context: [inappropriate]"
+  },
+  {
+    "start_time": "00:02:47.367",
+    "end_time": "00:02:49.027",
+    "text": " - And has it ever happened?",
+    "context": "[]\n\nTranscript history:\n[ Hell no.,  Actually, low key yes, I do.,  I've always had this like breakey.,  dream of having sex act through the fashion show.]\n\nCaption:\n - And has it ever happened?\nContext: [dream]\n\nTranscript history:\n[ Hell no.,  Actually, low key yes, I do.,  I've always had this like breakey.,  dream of having sex act through the fashion show.]\n\nCaption:\n - And has it ever happened?\nContext: [sexual"
+  },
+  {
+    "start_time": "00:02:49.027",
+    "end_time": "00:02:50.667",
+    "text": " What has to happen, do you think, for that to happen?",
+    "context": "Emotional tone: unclear\nSubtext/implied meaning: none\nContext: [sexual]"
+  },
+  {
+    "start_time": "00:02:52.436",
+    "end_time": "00:02:56.256",
+    "text": " I need to be around someone that's not gay.",
+    "context": "Transcript history: [I've always had this like breakey., dream of having sex through the fashion show., - And has it ever happened?, What has to happen, do you think, for that to happen?]\n\nCaption: [homophobic]\n\nContext: [homophobia]"
+  },
+  {
+    "start_time": "00:02:57.107",
+    "end_time": "00:02:58.867",
+    "text": " - Don't you think you'd make a nurse in real life?",
+    "context": "Context: [nurse]"
+  },
+  {
+    "start_time": "00:02:58.867",
+    "end_time": "00:03:00.227",
+    "text": " - No, girl, I don't know how to do any of that.",
+    "context": "Emotional tone: [confused]\nSubtext: [not capable]\n\nTranscript history: [ - And has it ever happened?,  What has to happen, do you think, for that to happen?,  I need to be around someone that's not gay.,  - Don't you think you'd make a nurse in real life?]\n\nCaption:\n - No, girl, I don't know how to do any of that. [not capable]"
+  },
+  {
+    "start_time": "00:03:04.378",
+    "end_time": "00:03:05.338",
+    "text": " Like, ''How do I take a pause?''",
+    "context": "Transcript history: [ What has to happen, do you think, for that to happen?, I need to be around someone that's not gay., - Don't you think you'd make a nurse in real life?, - No, girl, I don't know how to do any of that.]\n\nCaption:\nLike, ''How do I take a pause?'' [struggling]"
+  },
+  {
+    "start_time": "00:03:05.338",
+    "end_time": "00:03:06.258",
+    "text": " ''You know how to take a pause?''",
+    "context": "Context: [implied question]"
+  },
+  {
+    "start_time": "00:03:06.258",
+    "end_time": "00:03:07.418",
+    "text": " Well, I think you put your finger",
+    "context": "on something really important."
+  },
+  {
+    "start_time": "00:03:07.262",
+    "end_time": "00:03:08.662",
+    "text": " the fingers like on their skin.",
+    "context": "Context: [unclear]\n\nTranscript history:\n[ - No, girl, I don't know how to do any of that.,  Like, ''How do I take a pause?'',  ''You know how to take a pause?'',  Well, I think you put your finger]\n\nCaption:\nthe fingers like on their skin. [ - finger placement]"
+  },
+  {
+    "start_time": "00:03:08.662",
+    "end_time": "00:03:09.382",
+    "text": " Or some like that.",
+    "context": "Context: [awkward]\n\n[]\n\nTranscript history:\n[ ''I'm really excited to see you again.'',  ''Oh, no you're not.'',  ''I'm sorry, I didn't mean to upset you.'',  ''I know, I'm sorry.'']\n\nCaption:\n[]\n\nTranscript history:\n[ ''It was raining so hard, I could barely see.'',  ''I couldn't see anything, it was so rainy.'',  ''It was a rainy day, the sky was dark.'']"
+  },
+  {
+    "start_time": "00:03:09.382",
+    "end_time": "00:03:10.202",
+    "text": " No, not on the elbow.",
+    "context": "Transcript history: [You know how to take a pause? Well, I think you put your fingers, the fingers like on their skin, or some like that.]\n\nCaption:\nNo, not on the elbow. [passive aggressive]\n\nContext: []"
+  },
+  {
+    "start_time": "00:03:11.511",
+    "end_time": "00:03:12.071",
+    "text": " That's a bone.",
+    "context": "Transcript history: [Well, I think you put your finger, the fingers like on their skin, or some like that, No, not on the elbow.]\n\nCaption: [finger bones]\n\nEmotional tone: Neutral\n\nSubtext/implied meaning: The speaker is describing the location of a finger on a bone.\n\nContext: [bone finger]"
+  },
+  {
+    "start_time": "00:03:12.071",
+    "end_time": "00:03:15.031",
+    "text": " I heard that if you weren't a model you'd be a mathematician.",
+    "context": "Context: [passive aggressive]"
+  },
+  {
+    "start_time": "00:03:15.031",
+    "end_time": "00:03:15.291",
+    "text": " I would.",
+    "context": "Context: [self-deprecating]"
+  },
+  {
+    "start_time": "00:03:20.048",
+    "end_time": "00:03:22.088",
+    "text": " I would love to be a circus performer.",
+    "context": "Tone: enthusiastic\nContext: [circus]\n\nTranscript history:\n[ No, not on the elbow.,  That's a bone.,  I heard that if you weren't a model you'd be a mathematician.,  I would.]\n\nCaption:\n I would love to be a mathematician. [/transcript_history]\n\nTone: enthusiastic\nContext: [mathematics]\n\nTranscript history:\n[ No, not on the elbow.,  That's a bone.,  I heard that if you weren'"
+  },
+  {
+    "start_time": "00:03:22.088",
+    "end_time": "00:03:24.828",
+    "text": " Tights rope with this tight pussy.",
+    "context": "[]\n\nContext: [sexual innuendo]"
+  },
+  {
+    "start_time": "00:03:26.499",
+    "end_time": "00:03:27.899",
+    "text": " -Yeah, I feel like that makes sense.",
+    "context": "Caption: -Yeah, I feel like that makes sense. []\n\nEmotional tone: neutral\nSubtext: None\nNon-literal meaning: None\n\nContext: None"
+  },
+  {
+    "start_time": "00:03:27.899",
+    "end_time": "00:03:28.899",
+    "text": " -What would you do, girl?",
+    "context": "Context: [suggestive]\n\nEmotional tone: [playful]\n\nSubtext/non-literal meaning: [circus performer]"
+  },
+  {
+    "start_time": "00:03:28.899",
+    "end_time": "00:03:29.979",
+    "text": " -Well, I actually would love to struggle",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:03:30.252",
+    "end_time": "00:03:31.252",
+    "text": " to be Adonzo.",
+    "context": "[literal]"
+  },
+  {
+    "start_time": "00:03:30.252",
+    "end_time": "00:03:31.712",
+    "text": " I don't wanna be a background dancer.",
+    "context": "Caption: I don't wanna be a [background dancer].\nContext: [passive aggressive]"
+  },
+  {
+    "start_time": "00:03:31.252",
+    "end_time": "00:03:33.152",
+    "text": " - Hey, background?",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:03:31.712",
+    "end_time": "00:03:33.312",
+    "text": " - Oh. - I wanna be a star",
+    "context": "[]\n\nTranscript history:\n[ -Well, I actually would love to struggle,  to be Adonzo.,  I don't wanna be a background dancer.,  - Hey, background?]\n\nCaption:\n - Oh. - I wanna be a star\n\nEmotional tone: Determined\nSubtext: Ambition\nNon-literal meaning: None."
+  },
+  {
+    "start_time": "00:03:33.152",
+    "end_time": "00:03:34.872",
+    "text": " That was so shady, I'm kidding.",
+    "context": "Transcript history: [to be Adonzo., I don't wanna be a background dancer., - Hey, background?, - Oh. - I wanna be a star]\n\nCaption:\n[sarcastic]\n\nContext: [none]"
+  },
+  {
+    "start_time": "00:03:42.548",
+    "end_time": "00:03:43.168",
+    "text": " performer.",
+    "context": "Transcript history: [I don't wanna be a background dancer., - Hey, background?, - Oh. - I wanna be a star, That was so shady, I'm kidding.]\n\nCaption: [dancer]"
+  },
+  {
+    "start_time": "00:03:43.168",
+    "end_time": "00:03:44.328",
+    "text": " 04:06 Oh my god okay period.",
+    "context": "Context: [passive aggressive]\n\nTranscript history:\n[ - Hey, background?,  - Oh. - I wanna be a star,  That was so shady, I'm kidding.,  performer.]\n\nCaption:\n04:06 [sarcastic] Okay, so I just want to be a star, no biggie."
+  },
+  {
+    "start_time": "00:03:44.328",
+    "end_time": "00:03:45.608",
+    "text": " So like dancing with the stars?",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:03:45.608",
+    "end_time": "00:03:46.608",
+    "text": " 05:12 Why didn't that...",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:03:46.608",
+    "end_time": "00:03:47.888",
+    "text": " Why wasn't that the first thing that came to your head?",
+    "context": "Transcript history: [performer., 04:06 Oh my god okay period., So like dancing with the stars?, 05:12 Why didn't that...]\n\nCaption:\n Why wasn't that [a common thought]? [[]]"
+  },
+  {
+    "start_time": "00:03:49.628",
+    "end_time": "00:03:50.588",
+    "text": " Because I wanna be a background dancer!",
+    "context": "Context: [excited]"
+  },
+  {
+    "start_time": "00:03:50.588",
+    "end_time": "00:03:51.548",
+    "text": " Well, I do for you!",
+    "context": "Transcript history: [So like dancing with the stars?, 05:12 Why didn't that..., Why wasn't that the first thing that came to your head?, Because I wanna be a background dancer!]\n\nCaption: Well, I do for you!\n\nContext: [passive aggressive]\n\nNote: No additional context is needed for this caption."
+  },
+  {
+    "start_time": "00:03:51.548",
+    "end_time": "00:03:53.528",
+    "text": " I think we would make a great make-",
+    "context": "team!\n\nContext: [excited]"
+  },
+  {
+    "start_time": "00:03:52.577",
+    "end_time": "00:03:56.797",
+    "text": " combination. Okay cool, well if there was me and you together then I would be kind of",
+    "context": "excited.\n\nContext: [romantic]\n\nTranscript history:\n[ You know what's the best part of being a human?, Being able to dream. But also, being able to dream makes us vulnerable.],\n\nCaption:\nI guess that's why I like to keep my dreams to myself.\n\nContext: [cautious]"
+  },
+  {
+    "start_time": "00:03:56.657",
+    "end_time": "00:03:57.257",
+    "text": " Pretty cool.",
+    "context": "Context: [excited]\n\nTranscript history:\n[Because I wanna be a background dancer!,  Well, I do for you!,  I think we would make a great make-,  combination. Okay cool, well if there was me and you together then I would be kind of]\n\nCaption:\n Pretty cool. [/Context: [excited]"
+  },
+  {
+    "start_time": "00:03:57.657",
+    "end_time": "00:03:58.017",
+    "text": " I only do.",
+    "context": "Transcript history: [ Well, I do for you!, I think we would make a great make-, combination. Okay cool, well if there was me and you together then I would be kind of, Pretty cool.]\n\nCaption:\nI only do what's right for me. [neutral]"
+  },
+  {
+    "start_time": "00:03:59.157",
+    "end_time": "00:03:59.997",
+    "text": " * \u307e\u305a\u4e2d\u5462*",
+    "context": "Transcript history: [I think we would make a great combination.]\nCaption: [romantic]\n\nTranscript history: [Okay cool, well if there was me and you together then I would be kind of, Pretty cool.]\nCaption: [flirty]\n\nTranscript history: [I only do.]\nCaption: [apologetic]\n\nTranscript history: [I think we would make a great combination.]\nCaption: [cheerful]\n\nTranscript history: [Okay cool, well if there was me and you together then I would be kind of,"
+  },
+  {
+    "start_time": "00:03:59.997",
+    "end_time": "00:04:01.097",
+    "text": " Geva Down.",
+    "context": "Transcript history: [combination. Okay cool, well if there was me and you together then I would be kind of, Pretty cool., I only do, * \u307e\u305a\u4e2d\u306d*]\n\nCaption: Geva Down.\n\nContext: [negative]"
+  },
+  {
+    "start_time": "00:04:00.017",
+    "end_time": "00:04:01.937",
+    "text": " They were up, Viva Up, I need to know.",
+    "context": "Tone: Neutral\nSubtext: Requirement for information\nContext: [urgent]"
+  },
+  {
+    "start_time": "00:04:00.017",
+    "end_time": "00:04:01.577",
+    "text": " Who's Victoria and what's her secret?",
+    "context": "Transcript history: [ I only do.,  * \u307e\u305a\u4e2d\u306d*,  Geva Down.,  They were up, Viva Up, I need to know.]\n\nCaption: [?]\n\nContext: [Victoria, Geva Down, Viva Up]"
+  },
+  {
+    "start_time": "00:04:01.097",
+    "end_time": "00:04:01.597",
+    "text": " Diva Down.",
+    "context": "Context: [upset]\n\nAnalysis:\nThe emotional tone of the caption appears to be upset, as indicated by the use of the word \"down.\" The subtext or non-literal meaning of the caption is not clear from the provided transcript history."
+  },
+  {
+    "start_time": "00:04:01.597",
+    "end_time": "00:04:02.257",
+    "text": " * SPEEDically*",
+    "context": "\"They were up. Viva Up. I need to know. Who's Victoria and what's her secret? Diva Down.\""
+  },
+  {
+    "start_time": "00:04:01.677",
+    "end_time": "00:04:04.957",
+    "text": " Victoria's actually this middle-aged man named Victor",
+    "context": "[surprise]\n\nIn this case, the context is not needed because the caption is simply stating a fact and does not imply any emotional tone or subtext."
+  },
+  {
+    "start_time": "00:04:01.937",
+    "end_time": "00:04:02.637",
+    "text": " None of us down.",
+    "context": "Caption: [unclear tone]\n\nContext: [sarcasm]\n\nThe emotional tone of the caption is unclear, and it could be interpreted in various ways. To provide helpful clarification, it's essential to understand the context of the statement. In this case, it's unclear what the speaker meant by \"none of us down.\" However, based on the transcript history, it seems like the speaker may be using sarcasm to express frustration or disappointment. Therefore, the context could be \"down\" as in \"not doing well\" or \"having a bad day.\"\n\n"
+  },
+  {
+    "start_time": "00:04:02.257",
+    "end_time": "00:04:03.157",
+    "text": " Diva Down.",
+    "context": "[]\n\nTranscript history:\n[ Diva Down.,  * SPEEDily*,  Victoria's actually this middle-aged man named Victor,  None of us down.]\n\nCaption:\n Victoria. [Context: Diva, but referring to a man]"
+  },
+  {
+    "start_time": "00:04:02.637",
+    "end_time": "00:04:03.617",
+    "text": " We're going up from here.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:04:03.157",
+    "end_time": "00:04:03.637",
+    "text": " Diva Down.",
+    "context": "Emotional tone: [negative]\nSubtext: [mocking]\nContext: [Victoria, a drag queen]\n\nTranscript history:\n[Victoria's actually this middle-aged man named Victor, None of us down., Diva Down., We're going up from here.]\n\nCaption:\n Diva Down. [/"
+  },
+  {
+    "start_time": "00:04:03.637",
+    "end_time": "00:04:03.737",
+    "text": " Diva Down.",
+    "context": "Context: [emotional]\n\nEmotional tone: Negative\nSubtext: Implies that the diva is experiencing sadness or disappointment\nNon-literal meaning: None"
+  },
+  {
+    "start_time": "00:04:03.737",
+    "end_time": "00:04:20.237",
+    "text": " Diva Down.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:04:15.567",
+    "end_time": "00:04:18.107",
+    "text": " Yeah, and he doesn't have any secrets, he's an open book.",
+    "context": "Context: [cynical]\n\nAnalysis: The emotional tone of the caption is cynical, implying that the person being referred to is not trustworthy or reliable. The subtext is that the speaker is not impressed with the person's openness, as they may have ulterior motives or be hiding something. The use of the word \"book\" is also a non-literal meaning, as it refers to someone who is predictable and easy to read, rather than an actual book. The caption may be confusing for neurodivergent viewers who may not understand the intended meaning of the word \""
+  },
+  {
+    "start_time": "00:04:20.207",
+    "end_time": "00:04:20.947",
+    "text": " Are you autistic?",
+    "context": "[]\n\nContext: [no context needed]"
+  },
+  {
+    "start_time": "00:04:20.237",
+    "end_time": "00:04:21.357",
+    "text": " Dev Down.",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:04:20.947",
+    "end_time": "00:04:21.567",
+    "text": " Artistic.",
+    "context": "Context: [literal]"
+  },
+  {
+    "start_time": "00:04:21.357",
+    "end_time": "00:04:22.557",
+    "text": " Diva Down.",
+    "context": "Context: [derogatory]"
+  },
+  {
+    "start_time": "00:04:22.557",
+    "end_time": "00:04:23.177",
+    "text": " Yeah.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:04:23.177",
+    "end_time": "00:04:24.117",
+    "text": " Diva Down.",
+    "context": "Emotional tone: [displeased]\nSubtext/non-literal meaning: [criticism]\nContext: [artistic criticism]"
+  },
+  {
+    "start_time": "00:04:24.117",
+    "end_time": "00:04:26.317",
+    "text": " Diva Down.",
+    "context": "Emotional tone: [defeated]\nSubtext: [struggling]\nImplied meaning: [sadness, disappointment]\nContext: []"
+  },
+  {
+    "start_time": "00:04:26.578",
+    "end_time": "00:04:26.638",
+    "text": " Yeah.",
+    "context": "Context: [neutral]"
+  },
+  {
+    "start_time": "00:04:27.478",
+    "end_time": "00:04:29.238",
+    "text": " I'm very artistic, honestly.",
+    "context": "[]\n\nAnalysis: The emotional tone of the caption appears to be positive, as the speaker is expressing pride in their artistic abilities. There is no implied meaning or subtext in this caption, and no additional context is needed to understand it."
+  },
+  {
+    "start_time": "00:04:29.238",
+    "end_time": "00:04:30.758",
+    "text": " Like, it's like my thing.",
+    "context": "Transcript history: [ Diva Down.,  Diva Down.,  Yeah.,  I'm very artistic, honestly.]\n\nCaption: Like, it's like my thing. [context: personal preference]"
+  },
+  {
+    "start_time": "00:04:32.092",
+    "end_time": "00:04:33.712",
+    "text": " Like, if you know me, you know I'm artistic,",
+    "context": "Transcript history: [ Diva Down.,  Yeah.,  I'm very artistic, honestly.,  Like, it's like my thing.]\n\nCaption: [artistic, artistic, artistic]\n\n[]"
+  },
+  {
+    "start_time": "00:04:33.712",
+    "end_time": "00:04:35.092",
+    "text": " 'cause I'm surprised you didn't know that.",
+    "context": "Emotional tone: confident\nSubtext: implying the speaker has a talent for art\nImplied meaning: the speaker is expressing surprise that the listener didn't already know the speaker is artistic\n\nContext: [artistic talent]"
+  },
+  {
+    "start_time": "00:04:35.071",
+    "end_time": "00:04:37.251",
+    "text": " Do you like, believe in witches?",
+    "context": "Context: [confused]\n\n[]"
+  },
+  {
+    "start_time": "00:04:37.251",
+    "end_time": "00:04:38.451",
+    "text": " I'm a witch",
+    "context": "Context: [creative]"
+  },
+  {
+    "start_time": "00:04:38.451",
+    "end_time": "00:04:39.271",
+    "text": " Believe it in",
+    "context": "Transcript history:\n[ Like, if you know me, you know I'm artistic, 'cause I'm surprised you didn't know that. Do you like, believe in witches? I'm a witch]\n\nCaption:\nBelieve it [in] witches.\n\nContext: [sarcasm]"
+  },
+  {
+    "start_time": "00:04:42.417",
+    "end_time": "00:04:44.877",
+    "text": "\u0430\u043b\u0435",
+    "context": "Transcript history:\n[ 'cause I'm surprised you didn't know that.,  Do you like, believe in witches?,  I'm a witch,  Believe it in]\n\nCaption:\n\u0430\u043b\u0435 [I'm not sure what you mean by that.]"
+  },
+  {
+    "start_time": "00:04:44.877",
+    "end_time": "00:05:08.957",
+    "text": " vamos",
+    "context": "Transcript history: [Do you like, believe in witches?, I'm a witch, Believe it in, ale]\n\nCaption: vamos [context: Spanish for \"let's go\"]\n\nNo additional context is needed."
+  },
+  {
+    "start_time": "00:04:57.538",
+    "end_time": "00:04:59.118",
+    "text": " What you'd eat.",
+    "context": "Context: [ambiguous]"
+  },
+  {
+    "start_time": "00:04:59.298",
+    "end_time": "00:05:00.178",
+    "text": " What'd you like?",
+    "context": "Transcript history: [Believe it in, vamos, What you'd eat.]\n\nCaption:\n What'd you like?\n\nContext:\n[]\n\nEmotional tone: Neutral\nSubtext/non-literal meaning: None\n\nNote: The caption appears to be a standard question, and there is no indication that it contains sarcasm, humor, or non-literal language. Therefore, no context is needed."
+  },
+  {
+    "start_time": "00:05:00.178",
+    "end_time": "00:05:01.178",
+    "text": " What?",
+    "context": "The emotional tone of the caption is confused or unsure. The subtext is that the speaker is asking a question, but is not receiving a response or clarification. The non-literal meaning is that the speaker is asking for information or assistance. If additional context is needed, it could be helpful to include \"help me\" or \"assist me\" in square brackets."
+  },
+  {
+    "start_time": "00:05:02.178",
+    "end_time": "00:05:03.898",
+    "text": " Sorry I just shit my pants.",
+    "context": "Context: [embarrassed]"
+  },
+  {
+    "start_time": "00:05:02.843",
+    "end_time": "00:05:03.403",
+    "text": " i didn't",
+    "context": "Transcript history: [What you'd eat., What'd you like?, What?, Sorry I just shit my pants.]\n\nCaption: i didn't eat my pants [].\n\nThe caption implies that the person is apologizing for eating their pants, which is not possible. The context provided [[]] is necessary to clarify that the person is expressing regret for a mistake or misunderstanding, rather than an actual incident."
+  },
+  {
+    "start_time": "00:05:04.443",
+    "end_time": "00:05:05.243",
+    "text": " i'm a cancer",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:05:05.243",
+    "end_time": "00:05:05.883",
+    "text": " are you",
+    "context": "[laughing?]"
+  },
+  {
+    "start_time": "00:05:05.883",
+    "end_time": "00:05:06.283",
+    "text": " carl",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:05:06.283",
+    "end_time": "00:05:07.163",
+    "text": " so i was born in leo",
+    "context": "Emotional tone: [indifferent]\n\nSubtext or non-literal meaning: [none]\n\nContext needed: []\n\nTranscript history: [i didn't,  i'm a cancer,  are you,  carl]\n\nCaption:\n so i was born in leo [context: astrology]"
+  },
+  {
+    "start_time": "00:05:07.163",
+    "end_time": "00:05:07.483",
+    "text": " but",
+    "context": "It's unclear what the intended meaning of this response is without additional context. Without further information, it's difficult to determine the emotional tone or subtext. Therefore, I recommend providing context to help clarify the intended meaning."
+  },
+  {
+    "start_time": "00:05:07.483",
+    "end_time": "00:05:08.123",
+    "text": " so you're a leo",
+    "context": "[]\n\nTranscript history:\n[ are you,  carl,  so i was born in leo,  but]\n\nCaption:\nso you're a leo [sarcastic]"
+  },
+  {
+    "start_time": "00:05:08.123",
+    "end_time": "00:05:08.523",
+    "text": " yeah",
+    "context": "Context: [friendly]"
+  },
+  {
+    "start_time": "00:05:08.957",
+    "end_time": "00:05:09.737",
+    "text": " vamos",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:05:09.737",
+    "end_time": "00:05:10.797",
+    "text": " vamos",
+    "context": "Context: [friendly]"
+  },
+  {
+    "start_time": "00:05:10.797",
+    "end_time": "00:05:10.997",
+    "text": " is",
+    "context": "the caption for the video?\n\nContext: [happy]"
+  },
+  {
+    "start_time": "00:05:10.997",
+    "end_time": "00:05:11.737",
+    "text": " last",
+    "context": "Context: [Spanish]\n\n[]\n\nAnalysis: The emotional tone of the caption is neutral. The subtext or non-literal meaning is not clear. However, the caption is in Spanish, which may require additional context for some viewers."
+  },
+  {
+    "start_time": "00:05:11.737",
+    "end_time": "00:05:11.777",
+    "text": " a",
+    "context": "Context: [Spanish translation]"
+  },
+  {
+    "start_time": "00:05:11.777",
+    "end_time": "00:05:41.757",
+    "text": " Thank you.",
+    "context": "Context: [polite]"
+  },
+  {
+    "start_time": "00:05:14.797",
+    "end_time": "00:05:19.577",
+    "text": " But I'm a Czech you know what that means. So it's like, I was born a SEXU like",
+    "context": "Context: [sexual innuendo]\n\nEmotional tone: [confused]\n\nSubtext: [none]\n\nAnalysis: The caption is incomplete and contains a sexual innuendo that may not be clear to all viewers. It is important to provide context to clarify the intended meaning and tone of the caption."
+  },
+  {
+    "start_time": "00:05:19.487",
+    "end_time": "00:05:21.727",
+    "text": " I was born at 4.20am, the first day of Leo.",
+    "context": "Transcript history: [ last,  a,  Thank you.,  But I'm a Czech you know what that means. So it's like, I was born a SEXU like]\n\nCaption: I was born at 4.20am, the first day of Leo. [/] Context: [literal]"
+  },
+  {
+    "start_time": "00:05:22.227",
+    "end_time": "00:05:23.767",
+    "text": " I get on really well with Leos.",
+    "context": "[]\n\nTranscript history:\n[ a,  Thank you.,  But I'm a Czech you know what that means. So it's like, I was born a SEXU like,  I was born at 4.20am, the first day of Leo.]\n\nCaption:\n I'm a Leo, born on the first day of Leo."
+  },
+  {
+    "start_time": "00:05:23.927",
+    "end_time": "00:05:24.747",
+    "text": " Period, makes sense.",
+    "context": "Transcript history: [Thank you., But I'm a Czech you know what that means. So it's like, I was born a SEXU like, I was born at 4.20am, the first day of Leo., I get on really well with Leos.]\n\nCaption: [metaphorical]"
+  },
+  {
+    "start_time": "00:05:26.967",
+    "end_time": "00:05:27.667",
+    "text": " Aquarius",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:05:27.667",
+    "end_time": "00:05:28.127",
+    "text": " Blubbit",
+    "context": "Context: [unclear]"
+  },
+  {
+    "start_time": "00:05:28.167",
+    "end_time": "00:05:28.487",
+    "text": " Bhadi",
+    "context": "Context: [confused]"
+  },
+  {
+    "start_time": "00:05:28.667",
+    "end_time": "00:05:29.167",
+    "text": " Really?",
+    "context": "[]\n\nTranscript history:\n[ Period, makes sense.,  Aquarius,  Blubbit,  Bhadi]\n\nCaption:\n Really? [, sarcastic]"
+  },
+  {
+    "start_time": "00:05:29.187",
+    "end_time": "00:05:30.007",
+    "text": " B-H-A-D",
+    "context": "[]\n\nThe caption \"B-H-A-D\" is likely an acronym for something, and without additional context, it is difficult to determine the emotional tone or subtext."
+  },
+  {
+    "start_time": "00:05:30.027",
+    "end_time": "00:05:30.527",
+    "text": " BHAD",
+    "context": "Context: [angry]\n\nTranscript history:\n[ Blubbit, Bhadi, Really?, B-H-A-D]\n\nCaption:\nBHAD [context needed]"
+  },
+  {
+    "start_time": "00:05:30.567",
+    "end_time": "00:05:31.267",
+    "text": " BHAAD",
+    "context": "[emotional tone: frustration]"
+  },
+  {
+    "start_time": "00:05:31.307",
+    "end_time": "00:05:32.187",
+    "text": " That's you",
+    "context": "Emotional tone: Confused or frustrated\nContext: [wrong person]"
+  },
+  {
+    "start_time": "00:05:33.797",
+    "end_time": "00:05:35.897",
+    "text": " Well, I'm glad that we do believe in star signs, though,",
+    "context": "[skeptical]\n\nTranscript history:\n[ B-H-A-D,  BHAD,  BHAAD,  That's you]\n\nCaption:\nWell, I'm glad that we do believe in star signs, though, [skeptical]."
+  },
+  {
+    "start_time": "00:05:35.897",
+    "end_time": "00:05:37.237",
+    "text": " I do.",
+    "context": "Context: [positive]\n\nEmotional tone: [positive]\n\nSubtext/non-literal meaning: [none]\n\nAnalysis: The caption \"I do\" is a positive response to the previous statement \"I do believe in star signs.\" No additional context is needed to understand the tone or implied meaning of the caption."
+  },
+  {
+    "start_time": "00:05:36.417",
+    "end_time": "00:05:39.037",
+    "text": " I'm not, but I feel like now more than ever, I'm, like, meeting people, and I'm",
+    "context": "finding out that they're like me.\n\nTranscript history: [ BHAAD,  That's you,  Well, I'm glad that we do believe in star signs, though,,  I do.]\n\nCaption: I'm not, but I feel like now more than ever, I'm, like, meeting people, and I'm finding out that they're like me.\nContext: [relieved]"
+  },
+  {
+    "start_time": "00:05:37.237",
+    "end_time": "00:05:37.937",
+    "text": " like you said",
+    "context": "Context: [unclear]"
+  },
+  {
+    "start_time": "00:05:38.718",
+    "end_time": "00:05:41.078",
+    "text": " like it gives like your sign, no",
+    "context": "Transcript history:\n[ Well, I'm glad that we do believe in star signs, though,,  I do.,  I'm not, but I feel like now more than ever, I'm, like you said]\n\nCaption:\n like it gives like your sign, no [context: sarcasm]\n\nContext: [sarcastic]"
+  },
+  {
+    "start_time": "00:05:41.098",
+    "end_time": "00:05:41.558",
+    "text": " shade",
+    "context": "Transcript history: [I do., I'm not, but I feel like now more than ever, I'm, like, meeting people, and I'm, like you said, like it gives like your sign, no]\n\nCaption:\n shade\n\nContext: [neutral]"
+  },
+  {
+    "start_time": "00:05:41.558",
+    "end_time": "00:05:43.778",
+    "text": " sometimes, like Aquarius is good, Taurus",
+    "context": "Context: [unclear meaning]\n\nTranscript history:\n[I'm not, but I feel like now more than ever, I'm, like, meeting people, and I'm, like you said, like it gives like your sign, no, shade]\n\nCaption:\nsometimes, like Aquarius is good, Taurus\n\nContext: [unclear meaning]\n\nTranscript history:\n[I'm not, but I feel like now more than ever, I'm, like, meeting people, and I'm, like you said, like it gives like"
+  },
+  {
+    "start_time": "00:05:44.958",
+    "end_time": "00:05:45.798",
+    "text": " - It's just fine.",
+    "context": "Context: []"
+  },
+  {
+    "start_time": "00:05:45.798",
+    "end_time": "00:05:46.798",
+    "text": " Aries is great.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:05:46.798",
+    "end_time": "00:05:47.598",
+    "text": " - Yeah.",
+    "context": "Context: [confident]"
+  },
+  {
+    "start_time": "00:05:48.538",
+    "end_time": "00:05:50.678",
+    "text": " *Gloss*",
+    "context": "Context: [tongue-in-cheek]\n\nExplanation: The caption is a playful and sarcastic comment on the previous discussion about the zodiac signs. The context is provided in square brackets to indicate that the tone is not meant to be taken literally."
+  },
+  {
+    "start_time": "00:05:54.908",
+    "end_time": "00:05:58.288",
+    "text": " - Someone told me I worked at like 30 days the other day one.",
+    "context": "Context: [unclear]"
+  },
+  {
+    "start_time": "00:05:58.288",
+    "end_time": "00:05:59.668",
+    "text": " minute, man.",
+    "context": "Caption: \"Aries is great. - Yeah., *Gloss*, - Someone told me I worked at like 30 days the other day one.\"\nContext: [misinterpretation]"
+  },
+  {
+    "start_time": "00:06:03.277",
+    "end_time": "00:06:07.037",
+    "text": " you. I said, yes. She looked me dead in the eyes--30.",
+    "context": "Transcript history: [ - Yeah.,  *Gloss*,  - Someone told me I worked at like 30 days the other day one.,  minute, man.]\n\nCaption:\nI said, yes. She looked me dead in the eyes--30. [I'm confused]\n\nContext: [she was joking about my working days]"
+  },
+  {
+    "start_time": "00:06:07.037",
+    "end_time": "00:06:08.157",
+    "text": " That's crazy, because you're only...",
+    "context": "Transcript history: [ *Gloss*, - Someone told me I worked at like 30 days the other day one., minute, man., you. I said, yes. She looked me dead in the eyes--30.]\n\nCaption: That's crazy, because you're only working 30 days. [context: emphasis]"
+  },
+  {
+    "start_time": "00:06:09.578",
+    "end_time": "00:06:10.378",
+    "text": " 21",
+    "context": "Transcript history: [ - Someone told me I worked at like 30 days the other day one.,  minute, man.,  you. I said, yes. She looked me dead in the eyes--30.,  That's crazy, because you're only...]\nCaption:\n21 [sarcastic]"
+  },
+  {
+    "start_time": "00:06:09.578",
+    "end_time": "00:06:12.698",
+    "text": " But do you think there's a misconception that models don't have a personality?",
+    "context": "Emotional tone: Neutral\nSubtext: None\nNon-literal meaning: None\n\nContext: [debatable]"
+  },
+  {
+    "start_time": "00:06:10.378",
+    "end_time": "00:06:11.378",
+    "text": " 21!",
+    "context": "Context: [skeptical]"
+  },
+  {
+    "start_time": "00:06:11.378",
+    "end_time": "00:06:12.978",
+    "text": " No, honestly it was...",
+    "context": "Context: [dismissive]\n\nReview:\nThe emotional tone of the caption appears to be dismissive. The subtext is that the speaker is not taking the question seriously. The non-literal meaning is that the speaker is expressing their opinion.\n\nContext: [dismissive]"
+  },
+  {
+    "start_time": "00:06:12.698",
+    "end_time": "00:06:14.698",
+    "text": " Or are you just the only exception?",
+    "context": "Context: [unclear]"
+  },
+  {
+    "start_time": "00:06:22.299",
+    "end_time": "00:06:25.979",
+    "text": " have personalities but they're just not fun. They're just very concerned with",
+    "context": "[formal]"
+  },
+  {
+    "start_time": "00:06:26.257",
+    "end_time": "00:06:29.497",
+    "text": " So, you been having this conversation with our parents, maybe, over a few years.",
+    "context": "Context: [long-standing]"
+  },
+  {
+    "start_time": "00:06:29.737",
+    "end_time": "00:06:32.597",
+    "text": " Mm... I mean you don't always need to be serving cunt.",
+    "context": "Context: [hyperbole]"
+  },
+  {
+    "start_time": "00:06:32.617",
+    "end_time": "00:06:34.737",
+    "text": " Do you think that beauty is actually",
+    "context": "[in the eye of the beholder]?\n\nEmotional tone: questioning/curious\nSubtext/non-literal meaning: subjectivity of beauty\nContext: None needed."
+  },
+  {
+    "start_time": "00:06:36.657",
+    "end_time": "00:06:38.397",
+    "text": " more important on the inside than the outside?",
+    "context": "Transcript history: [have personalities but they're just not fun. They're just very concerned with, So, you been having this conversation with our parents, maybe, over a few years., Mm... I mean you don't always need to be serving cunt., Do you think that beauty is actually more important on the inside than the outside? ]\n\nCaption: [debate]\n\nContext: [personalities, cunt, beauty]"
+  },
+  {
+    "start_time": "00:06:38.397",
+    "end_time": "00:06:39.197",
+    "text": " I've always said this.",
+    "context": "[]\n\nTranscript history:\n[ So, you been having this conversation with our parents, maybe, over a few years.,  Mm... I mean you don't always need to be serving cunt.,  Do you think that beauty is actually,  more important on the inside than the outside?]\n\nCaption:\nI've always believed this."
+  },
+  {
+    "start_time": "00:06:39.197",
+    "end_time": "00:06:39.897",
+    "text": " I don't know if you agree,",
+    "context": "Context: [disagree]\n\nEmotional tone: [neutral]\n\nSubtext/non-literal meaning: [none]\n\nAdditional context: [none]"
+  },
+  {
+    "start_time": "00:06:40.098",
+    "end_time": "00:06:42.438",
+    "text": " but I don't remember what someone looks like, I can remember how they act.",
+    "context": "Transcript history: [Do you think that beauty is actually, more important on the inside than the outside? I've always said this. I don't know if you agree.]\n\nCaption: [inward focus]\n\nContext: [I don't remember what someone looks like, I can remember how they act.]\n\nThe emotional tone is neutral, and the subtext is that the speaker values character and behavior over physical appearance. The non-literal meaning is that the speaker has a selective memory and remembers actions more than physical appearance. The context would improve clarity by providing additional information about the"
+  },
+  {
+    "start_time": "00:06:43.107",
+    "end_time": "00:06:44.547",
+    "text": " - Do you think that I would suit a bleached brow?",
+    "context": "Context: [unrelated]\n\nEmotional tone: neutral\n\nSubtext: not specified\n\nNon-literal meaning: not specified\n\nAnalysis: The caption appears to be unrelated to the transcript history. No additional context is needed.\n\nTranscript history:\n[ more important on the inside than the outside?,  I've always said this.,  I don't know if you agree,,  but I don't remember what someone looks like, I can remember how they act.]\n\nCaption:\n - I can't believe you just said that. [context:"
+  },
+  {
+    "start_time": "00:06:44.547",
+    "end_time": "00:06:45.207",
+    "text": " - Yeah.",
+    "context": "Emotional tone: neutral\nSubtext: none\nNon-literal meaning: none\nContext: []"
+  },
+  {
+    "start_time": "00:06:45.207",
+    "end_time": "00:06:46.907",
+    "text": " Er, it sounded like that was a No.",
+    "context": "Transcript history: [I don't know if you agree,, but I don't remember what someone looks like, I can remember how they act., - Do you think that I would suit a bleached brow?, - Yeah.]\n\nCaption: [ambiguous]\n\nContext: [unclear]"
+  },
+  {
+    "start_time": "00:06:46.907",
+    "end_time": "00:06:47.827",
+    "text": " - Yes.",
+    "context": "Emotional tone: neutral\nSubtext: none\nNon-literal meaning: none\nContext: []\n\nTranscript history:\n[ I've been trying to lose weight for a year now.,  - Have you tried any new diets?,  - Yeah.,  I've been on a keto diet.,  - Oh, that's tough. I've heard it's really hard to stick to a diet.,  - Yeah, it's definitely not easy. But I've been trying to be more mindful of my eating habits. ]\n\nCaption:\n - I"
+  },
+  {
+    "start_time": "00:06:53.837",
+    "end_time": "00:06:55.797",
+    "text": " -",
+    "context": "Caption: \"I'm sorry, I don't think I'm qualified for this job.\"\nContext: [apologetic]"
+  },
+  {
+    "start_time": "00:06:56.117",
+    "end_time": "00:06:56.997",
+    "text": " Would you go to space?",
+    "context": "Context: [question]\n\nEmotional tone: Neutral\nSubtext: None\nImplied meaning: None."
+  },
+  {
+    "start_time": "00:06:56.997",
+    "end_time": "00:06:58.577",
+    "text": " - No, I don't like that.",
+    "context": "Context: [negative]"
+  },
+  {
+    "start_time": "00:06:58.577",
+    "end_time": "00:06:59.837",
+    "text": " I feel like I already gave \"alien\":",
+    "context": "Context: [metaphor]"
+  },
+  {
+    "start_time": "00:06:59.837",
+    "end_time": "00:07:02.577",
+    "text": " so I kinda wanna just",
+    "context": "Transcript history: [ -, Would you go to space?, - No, I don't like that., I feel like I already gave \"alien\":]\n\nCaption:\nso I kinda wanna just [go to space]\n\nContext: [not sure]"
+  },
+  {
+    "start_time": "00:07:07.725",
+    "end_time": "00:07:14.125",
+    "text": " do it here. Maybe it's actually fun being single. Maybe we don't need anyone. I think 2025",
+    "context": "is the year for space travel.\n\nEmotional tone: [optimistic]\nSubtext: [nostalgia]\n\n[]\n\nTranscript history:\n[ I'm gonna watch the news now,  - Okay, let's go.  I'm gonna watch the news now,  - Okay, let's go.  I'm gonna watch the news now,  - Okay, let's go.]\n\nCaption:\nI need to watch the news now.\n\nEmotional tone: [neutral]\nSubtext: [distraction]\n"
+  },
+  {
+    "start_time": "00:07:16.487",
+    "end_time": "00:07:18.127",
+    "text": " was the year of being single.",
+    "context": "The emotional tone of the caption is nostalgic and reflective. The subtext is that the speaker is looking back on a significant year in their life, which was marked by a sense of independence and freedom. The non-literal meaning is that the speaker may have come to a new perspective on their life or relationships.\n\nContext: []"
+  },
+  {
+    "start_time": "00:07:18.127",
+    "end_time": "00:07:19.047",
+    "text": " Wow, actually.",
+    "context": "Transcript history: [I feel like I already gave \"alien\":, so I kinda wanna just, do it here. Maybe it's actually fun being single. Maybe we don't need anyone. I think 2025, was the year of being single.]\n\nCaption: [tongue-in-cheek]"
+  },
+  {
+    "start_time": "00:07:19.047",
+    "end_time": "00:07:19.987",
+    "text": " profound.",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:07:19.987",
+    "end_time": "00:07:21.047",
+    "text": " Yeah.",
+    "context": "Transcript history: [do it here. Maybe it's actually fun being single. Maybe we don't need anyone. I think 2025, was the year of being single., Wow, actually., profound.]\n\nCaption: Yeah.\n\nContext: [nothing]"
+  },
+  {
+    "start_time": "00:07:21.047",
+    "end_time": "00:07:22.607",
+    "text": " Being in a relationship is fun,",
+    "context": "[]\n\nNote: In this case, no additional context is needed as the caption accurately reflects the sentiment expressed in the transcript history."
+  },
+  {
+    "start_time": "00:07:25.177",
+    "end_time": "00:07:26.177",
+    "text": " So much work.",
+    "context": "Context: [frustrated]"
+  },
+  {
+    "start_time": "00:07:28.697",
+    "end_time": "00:07:29.517",
+    "text": " Are you paying?",
+    "context": "Caption: Are you paying?\n\nContext: []"
+  },
+  {
+    "start_time": "00:07:29.517",
+    "end_time": "00:07:30.757",
+    "text": " Because I didn't bring my wallet.",
+    "context": "Emotional tone: neutral\nSubtext/non-literal meaning: The speaker is expressing disappointment.\nContext: [disappointed]\n\nCaption:\n I'll pay. [/\n\nEmotional tone: neutral\nSubtext/non-literal meaning: The speaker is expressing disappointment.\nContext: [disappointed]"
+  },
+  {
+    "start_time": "00:07:30.757",
+    "end_time": "00:07:31.757",
+    "text": " So, classic you.",
+    "context": "The emotional tone of the caption appears to be lighthearted and playful. The subtext may suggest that the speaker is teasing or complimenting someone for being typical or predictable in their behavior. No additional context is needed.\n\nTranscript history:\n[ Being in a relationship is fun,,  So much work.,  Are you paying?,  Because I didn't bring my wallet.]\n\nCaption:\n [Relationships]"
+  },
+  {
+    "start_time": "00:07:31.757",
+    "end_time": "00:07:32.457",
+    "text": " I've already paid it.",
+    "context": "Context: [dismissive]"
+  },
+  {
+    "start_time": "00:07:34.846",
+    "end_time": "00:07:39.186",
+    "text": " Peanut Ted Dad: \"Hey! Madryn toute\u043e\u0440\u0430!",
+    "context": "Context: [congratulations]"
+  },
+  {
+    "start_time": "00:07:40.726",
+    "end_time": "00:07:41.606",
+    "text": " \uc77c\ub2e8 delir Israelite: People say models don't eat.",
+    "context": "[]\n\nTranscript history: [Because I didn't bring my wallet., So, classic you., I've already paid it., Peanut Ted Dad: \"Hey! Madryn toute\u043e\ub77c!]\n\nCaption:\nMadryn: [surprised] Wow, I guess I can't eat my sandwich today."
+  },
+  {
+    "start_time": "00:07:41.606",
+    "end_time": "00:07:41.886",
+    "text": " Well.",
+    "context": "Transcript history: So, classic you., I've already paid it., Peanut Ted Dad: \"Hey! Madryn touteora!, \uc77c\ub2e8 delir Israelite: People say models don't eat.\"\n\nCaption: Well.\n\nContext: [neutral]"
+  },
+  {
+    "start_time": "00:07:41.886",
+    "end_time": "00:07:44.186",
+    "text": " Well, I ate so y'all can stay mad.",
+    "context": "Context: [sarcastic]"
+  },
+  {
+    "start_time": "00:07:44.186",
+    "end_time": "00:07:44.686",
+    "text": "\ub2e8 Gupta: You already ate.",
+    "context": "Transcript history:\nPeanut Ted Dad: \"Hey! Madryn toute\u043e\u0440\u0430!,  \uc77c\ub2e8 delir Israelite: People say models don't eat.,  Well.,  Well, I ate so y'all can stay mad.]\n\nCaption:\n\ub2e8 Gupta: You already ate. [Context: Confirmation]"
+  },
+  {
+    "start_time": "00:07:44.686",
+    "end_time": "00:07:45.206",
+    "text": " limite Dad: Believe it or not vi...",
+    "context": "Context: [surprised]"
+  },
+  {
+    "start_time": "00:07:48.437",
+    "end_time": "00:07:53.557",
+    "text": " wait wait wait wait wait wait wait wait wait wait wait wait wait wait wait wait wait wait",
+    "context": "[]"
+  },
+  {
+    "start_time": "00:07:53.557",
+    "end_time": "00:08:09.577",
+    "text": " wait wait wait wait wait",
+    "context": "[]"
+  }
+]

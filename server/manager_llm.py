@@ -14,7 +14,7 @@ class Manager_LLM:
         )
         self.chat_template = "[INST] {prompt} [/INST]"
 
-    def generate_response(self, prompt: str, max_tokens: int = 128,
+    def generate_response(self, prompt: str, max_tokens: int = 48,
                  temperature: float = 0.7, top_p: float = 0.95) -> str:
         # Format prompt using the chat template
         formatted_prompt = self.tokenizer.apply_chat_template(
