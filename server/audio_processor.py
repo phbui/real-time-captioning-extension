@@ -140,14 +140,13 @@ class AudioProcessor:
             end_time = phrase_timestamp + timedelta(seconds=segment['end'])
             formatted_start = self.format_time(start_time)
             formatted_end = self.format_time(end_time)
-            transcript_obj.append({"text": segment['text'], "start": formatted_start, "end": formatted_end})
+            transcript_obj.append({"text": segment['text'], "start": formatted_start, "end": formatted_end, "context": ""})
         return transcript_obj
     
     def add_context_w_llm(self, caption, history):
         """
         Adds the context to caption from the LLM based on the prompt given in llm_prompt.txt.
         """
-
         try: 
             with open("llm_prompt.txt", "r") as file:
                 prompt_template = file.read()
