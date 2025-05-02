@@ -2,6 +2,10 @@
 
 ![](https://github.com/phbui/real-time-captioning-extension/blob/main/captioning.gif)
 
+## Technical Overview
+
+![](https://github.com/phbui/real-time-captioning-extension/blob/main/diagram.png)
+
 ## Builds
 
 Self-explanatory.
@@ -29,10 +33,6 @@ Self-explanatory.
 ## Server
 
 A WebSocket server that takes audio input and transcribes it.
-
-### TODO:
-
-- Add LLM-based contextual enrichment to the transcriptions.
 
 ### How to Run:
 
